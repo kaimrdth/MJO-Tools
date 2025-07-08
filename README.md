@@ -4,34 +4,34 @@ This is a curated archive of internal tools developed for Manhattan Justice Oppo
 
 ## Structure
 
-### `dashboard/`
+### [`dashboard/`](./dashboard/)
 The MJO Dashboard: a centralized AppSheet web app used by 35+ staff members to coordinate daily operations and client care. Contains visual assets and configuration files for the main operational interface.
 
-### `scripts/`
+### [`scripts/`](./scripts/)
 A comprehensive collection of Google Apps Script automations organized by function:
 
-#### `compliance-reports/`
-- **`sheets-menu/`** - Custom menu system for Google Sheets
-  - `ToolGuide.gs` - User guidance and documentation
-  - `ComplianceCustomMenu.gs` - Custom menu interface for compliance workflows
-- **`drafting-emails/`** - Email automation tools
-  - `SendEmailDrafts.gs` - Automated email draft generation and sending
-- **`tracking-dates/`** - Date management and tracking systems
-  - `PullUpcomingDates.gs` - Retrieves upcoming compliance dates
-  - `PushUpdatedDates.gs` - Updates date tracking across systems
-- **`report-generation/`** - Automated report creation
-  - `GenerateComplianceDrafts.gs` - Generates compliance report drafts
-  - `README.md` - Documentation for report generation processes
+#### [`compliance-reports/`](./scripts/compliance-reports/)
+- **[`sheets-menu/`](./scripts/compliance-reports/sheets-menu/)** - Custom menu system for Google Sheets
+  - [`ToolGuide.gs`](./scripts/compliance-reports/sheets-menu/ToolGuide.gs) - User guidance and documentation
+  - [`ComplianceCustomMenu.gs`](./scripts/compliance-reports/sheets-menu/ComplianceCustomMenu.gs) - Custom menu interface for compliance workflows
+- **[`drafting-emails/`](./scripts/compliance-reports/drafting-emails/)** - Email automation tools
+  - [`SendEmailDrafts.gs`](./scripts/compliance-reports/drafting-emails/SendEmailDrafts.gs) - Automated email draft generation and sending
+- **[`tracking-dates/`](./scripts/compliance-reports/tracking-dates/)** - Date management and tracking systems
+  - [`PullUpcomingDates.gs`](./scripts/compliance-reports/tracking-dates/PullUpcomingDates.gs) - Retrieves upcoming compliance dates
+  - [`PushUpdatedDates.gs`](./scripts/compliance-reports/tracking-dates/PushUpdatedDates.gs) - Updates date tracking across systems
+- **[`report-generation/`](./scripts/compliance-reports/report-generation/)** - Automated report creation
+  - [`GenerateComplianceDrafts.gs`](./scripts/compliance-reports/report-generation/GenerateComplianceDrafts.gs) - Generates compliance report drafts
+  - [`README.md`](./scripts/compliance-reports/report-generation/README.md) - Documentation for report generation processes
 
-#### `mcjc-ifier/`
+#### [`mcjc-ifier/`](./scripts/mcjc-ifier/)
 Manhattan Community Justice Center integration tools
-- `MCJC-ifier.gs` - Data transformation and formatting for MCJC systems
-- `MainSheetChecker.gs` - Validation and quality control for main data sheets
+- [`MCJC-ifier.gs`](./scripts/mcjc-ifier/MCJC-ifier.gs) - Data transformation and formatting for MCJC systems
+- [`MainSheetChecker.gs`](./scripts/mcjc-ifier/MainSheetChecker.gs) - Validation and quality control for main data sheets
 
-#### `group-calendar-generator/`
-- `Calendar-Generator.gs` - Automated calendar creation for group programming and court dates
+#### [`group-calendar-generator/`](./scripts/group-calendar-generator/)
+- [`Calendar-Generator.gs`](./scripts/group-calendar-generator/Calendar-Generator.gs) - Automated calendar creation for group programming and court dates
 
-### `media/`
+### [`media/`](./media/)
 Demo videos, diagrams, and visual aids for understanding how the systems work.
 
 ## Key Features
