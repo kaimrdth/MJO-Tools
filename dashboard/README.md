@@ -4,6 +4,8 @@ This folder documents the full AppSheet-based **MJO Dashboard**, an internal too
 
 The dashboard serves as a centralized platform for staff to manage client appointments, track participant flow, fulfill phone requests, access resources, and coordinate real-time tasks — all from a single interface.
 
+![dashboard screenshot](../images/dashboard.png)
+
 ---
 
 ## ⚙️ Platform Overview
