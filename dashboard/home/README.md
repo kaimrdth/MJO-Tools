@@ -1,7 +1,7 @@
 # 🏠 Home View
 
 The **Home** view is the default landing screen for staff, designed as a central dashboard for daily office operations. It dynamically displays the current date and aggregates multiple subviews that reflect real-time information on participants, appointments, and internal workflows.
-![Home View Screenshot](images/home-view.png)
+![Home View Screenshot](home-view.png)
 ---
 
 ## 🧱 View Type
