@@ -7,6 +7,18 @@ This is a curated archive of internal tools developed for Manhattan Justice Oppo
 ### [`dashboard/`](./dashboard/)
 The MJO Dashboard: a centralized AppSheet web app used by 35+ staff members to coordinate daily operations and client care. Contains visual assets and configuration files for the main operational interface.
 
+- **[`home/`](./dashboard/home/)** - Main dashboard home interface components
+- **[`waiting-area/`](./dashboard/waiting-area/)** - Interface components for participant waiting area management
+- **[`participants/`](./dashboard/participants/)** - Participant data management and case tracking
+- **[`supplies/`](./dashboard/supplies/)** - Inventory management and supply tracking
+- **[`phones/`](./dashboard/phones/)** - Phone system integration and communication tools
+- **[`resource-portal/`](./dashboard/resource-portal/)** - Centralized access to participant resources and referral information
+- **[`special-instructions/`](./dashboard/special-instructions/)** - Custom instructions for special care and attention
+- **[`attorney-rolodex/`](./dashboard/attorney-rolodex/)** - List of defense attorneys and contact information
+- **[`mjo-staff/`](./dashboard/mjo-staff/)** - Staff rolodex
+- **[`donations/`](./dashboard/donations/)** - Donation tracking and management system
+- **[`images/`](./dashboard/images/)** - Visual assets, icons, and media files for the dashboard interface
+
 ### [`scripts/`](./scripts/)
 A comprehensive collection of Google Apps Script automations organized by function:
 
@@ -42,6 +54,8 @@ Demo videos, diagrams, and visual aids for understanding how the systems work.
 - **Calendar Management**: Automated generation of group programming and court calendars
 - **Data Integration**: Tools for formatting and transferring data between MJO systems and external partners like MCJC
 - **Quality Control**: Validation systems to ensure data accuracy across all platforms
+- **Resource Management**: Centralized portal for participant resources, staff tools, and organizational assets
+- **Inventory Tracking**: Supply and donation management systems
 
 ## Technical Stack
 
