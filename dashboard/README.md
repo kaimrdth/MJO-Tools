@@ -2,7 +2,7 @@
 
 This folder documents the full AppSheet-based **MJO Dashboard**, an internal tool built to support daily office operations at Manhattan Justice Opportunities.
 
-The dashboard serves as a centralized platform for staff to manage client appointments, track participant flow, fulfill phone requests, access resources, and coordinate real-time tasks — all from a single interface.
+The dashboard serves as a centralized platform for staff to manage client appointments, track participant flow, fulfill phone requests, access resources, and coordinate real-time tasks — all from a single interface. It integrates with Slack and AcuityScheduling to push and pull appointment information as well as send messages based on business logic.
 
 ![dashboard screenshot](./images/dashboard.png)
 
@@ -13,7 +13,7 @@ The dashboard serves as a centralized platform for staff to manage client appoin
 - **Frontend**: AppSheet views and behavior logic
 - **Backend**: Google Sheets (data tables and schemas)
 - **Automation Layer**: AppSheet bots and custom Apps Script functions
-- **Integrations**: Slack, AcuityScheduling, Inventory system
+- **Integrations**: Slack API, AcuityScheduling API
 
 The documentation below is organized by feature. Each folder contains:
 - View definitions and UX logic
