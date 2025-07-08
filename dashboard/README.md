@@ -1,6 +1,6 @@
 # 🧭 MJO Dashboard
 
-This folder documents the full AppSheet-based **MJO Dashboard**, an internal tool built to support daily court operations at Manhattan Justice Opportunities.
+This folder documents the full AppSheet-based **MJO Dashboard**, an internal tool built to support daily office operations at Manhattan Justice Opportunities.
 
 The dashboard serves as a centralized platform for staff to manage client appointments, track participant flow, fulfill phone requests, access resources, and coordinate real-time tasks — all from a single interface.
 
