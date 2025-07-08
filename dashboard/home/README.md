@@ -1,6 +1,6 @@
 # 🏠 Home View
 
-The **Home** view is the default landing screen for staff, designed as a central dashboard for daily office operations. It dynamically displays the current date and aggregates multiple subviews that reflect real-time information on participants, appointments, and internal workflows.
+The **Home** view is the default landing screen for staff, designed as a central dashboard for daily office operations. It dynamically displays the current date and aggregates multiple subviews that reflect real-time information on participants, appointments, and internal workflows. It features integration with AcuityScheduling API to pull in real-time appointment information for our practitioners. It also triggers Slack webhooks when using the Sign In feature, so staff in office are notified when clients check in at the front desk.  
 
 ![Home View Screenshot](../images/home-view.png)
 ---
