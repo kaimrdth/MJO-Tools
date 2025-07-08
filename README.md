@@ -1,6 +1,6 @@
 # MJO-Tools
 
-This is a curated archive of internal tools developed for Manhattan Justice Opportunities (MJO), a court-based alternative-to-incarceration program in New York City. The tools were built to reduce manual overhead, streamline daily court operations, and improve service delivery to justice-involved participants. This repo is structured to support both internal handoff and as a public-facing portfolio of low-code systems work.
+This is a curated archive of internal tools developed for Manhattan Justice Opportunities (MJO), a court-based alternative-to-incarceration program in New York City. The tools were built to reduce manual overhead, streamline daily office operations, and improve service delivery to justice-involved participants. This repo is structured to support both internal handoff and as a public-facing portfolio of low-code systems work.
 
 ## Structure
 
