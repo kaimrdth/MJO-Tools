@@ -48,7 +48,7 @@ Demo videos, diagrams, and visual aids for understanding how the systems work.
 - **Frontend**: AppSheet (dashboard interface)
 - **Backend**: Google Apps Script (automation and data processing)
 - **Data Storage**: Google Sheets (primary data repository)
-- **Integration**: Custom APIs and data transformation tools
+- **Integration**: Custom APIs and data transformation tools. Primarily [AcuityScheduling](https://developers.acuityscheduling.com/) and [Slack Webhooks](https://api.slack.com/messaging/webhooks).
 
 ## Usage
 
