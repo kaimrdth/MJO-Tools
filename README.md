@@ -9,7 +9,7 @@ The tools were built to reduce manual overhead, streamline daily court operation
 - `dashboard/`  
   The MJO Dashboard: a centralized AppSheet web app used by 35+ staff members to coordinate daily operations and client care.
 
-- `scripts/`  
+- [scripts/](./scripts/)
   A collection of Google Apps Script automations powering case tracking, report generation, and data parsing.
 
 - `media/`  
