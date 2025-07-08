@@ -20,7 +20,7 @@ This system consists of two main components that work together to manage court d
 │ Case Data       │                     │ │Upcoming Dates│ │
 │                 │                     │ │   (Tab 1)    │ │
 │                 │    Push Updates     │ └──────────────┘ │
-│                 │ ◄──────────────────  │ ┌──────────────┐ │
+│                 │ ◄────────────────── │ ┌──────────────┐ │
 └─────────────────┘                     │ │Updated Dates │ │
                                         │ │   (Tab 2)    │ │
                                         │ └──────────────┘ │
