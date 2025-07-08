@@ -1,6 +1,6 @@
 # 🏠 Home View
 
-The **Home** view is the default landing screen for staff, designed as a central dashboard for daily court operations. It dynamically displays the current date and aggregates multiple subviews that reflect real-time information on participants, appointments, and internal workflows.
+The **Home** view is the default landing screen for staff, designed as a central dashboard for daily office operations. It dynamically displays the current date and aggregates multiple subviews that reflect real-time information on participants, appointments, and internal workflows.
 
 ---
 
@@ -21,62 +21,66 @@ The **Home** view is the default landing screen for staff, designed as a central
 
 ## 🧩 Subview: Appointments
 
-**🔹 View Type: Calendar**
-
-- **Table**: Appointments
+### 🔹 View Type: Calendar  
+- **Table**: `Appointments`
 
 ### 🔧 View Options:
-
-| **Setting** | **Value** |
-|-------------|-----------|
-| Start Date | Appointment Date |
-| Start Time | Appointment Time |
-| End Date | Appointment Date |
-| End Time | endtime |
-| Description | Type with Participant |
-| Category | Case Manager |
-| Default View | Day |
+| Setting        | Value               |
+|----------------|---------------------|
+| Start Date     | `Appointment Date`  |
+| Start Time     | `Appointment Time`  |
+| End Date       | `Appointment Date`  |
+| End Time       | `endtime`           |
+| Description    | `Type with Participant` |
+| Category       | `Case Manager`      |
+| Default View   | `Day`               |
 
 ---
 
 ## ⚡ Action: Check In
 
-**🔸 Action Name: Check In**
+This is a **Quick Action** shown prominently in the Appointments calendar. It creates a new row in the `Participant Log` table when staff mark someone as checked in.
 
-This is a **Quick Action** shown prominently in the Appointments calendar. It creates a new row in the Participant Log table when staff mark someone as checked in.
+| Attribute         | Value |
+|------------------|-------|
+| **Type**          | `Data: add a new row to another table` |
+| **Target Table**  | `Participant Log` |
+| **Set Columns**   | See below |
+| **Position**      | `Prominent` |
+| **Show If**       | `OR(CONTAINS([Case Manager], "In-Person"), CONTAINS([Appointment Type], "In-Person"))` |
+| **Confirmation**  | `CONCATENATE("Check In ", [Participant], "?")` |
 
-- **Action Type**: Data: add a new row to another table using values from this row
-- **Target Table**: Participant Log
-- **Set Columns**:
-  ```appsheetscript
-  Name         = [Participant]
-  Visit Reason = [Appointment Type]
-  CM           = [Full Case Manager]
-  Notes        = [Notes]
-  Walk In Date = today()
-  Check In     = timenow()
-  Status       = "Waiting Area"
-  ```
+**Set Column Values:**
+```text
+Name         = [Participant]
+Visit Reason = [Appointment Type]
+CM           = [Full Case Manager]
+Notes        = [Notes]
+Walk In Date = today()
+Check In     = timenow()
+Status       = "Waiting Area"
+```
 
-- **Position**: Prominent
-- **Show If**:
-  ```appsheetscript
-  OR(
-    CONTAINS([Case Manager], "In-Person"),
-    CONTAINS([Appointment Type], "In-Person")
-  )
-  ```
+---
 
-- **Confirmation Message**:
-  ```appsheetscript
-  CONCATENATE("Check In ", [Participant], "?")
-  ```
+## 🔄 Action: Sign In (Navigation)
+
+This action enables quick navigation from the Appointments calendar to the **Sign In** form at the front desk. While the "Check In" button provides rapid appointment check-ins, this action routes to the full sign-in workflow for walk-ins and detailed participant logging.
+
+| Attribute        | Value |
+|-----------------|-------|
+| **Action Name**  | `Sign In` |
+| **Type**         | `App: go to another view within this app` |
+| **Target**       | `LINKTOVIEW("Sign In")` |
+| **Table**        | `Appointments` |
+| **Position**     | `Primary` |
+| **Display Name** | `"Sign In"` |
 
 ---
 
 ## 📎 Notes
 
-- This dashboard is used live in court every day.
+- This dashboard is used live in office every day.
 - The Quick Check In action reduces friction by automatically logging arrivals with a timestamp and routing them to the "Waiting Area" flow.
 - The confirmation prompt helps prevent mis-clicks during rapid client check-ins.
 
@@ -87,6 +91,7 @@ This is a **Quick Action** shown prominently in the Appointments calendar. It cr
 *Screenshots to be added to `dashboard/home/images/` directory:*
 - `appointments-view-settings.png`
 - `check-in-action-settings.png`
+- `sign-in-action-settings.png`
 - `home-dashboard-overview.png`
 
 ---
