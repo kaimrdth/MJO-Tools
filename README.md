@@ -24,8 +24,8 @@ A comprehensive collection of Google Apps Script automations organized by functi
   - [`README.md`](./scripts/compliance-reports/report-generation/README.md) - Documentation for report generation processes
 
 #### [`mcjc-ifier/`](./scripts/mcjc-ifier/)
-Manhattan Community Justice Center integration tools
-- [`MCJC-ifier.gs`](./scripts/mcjc-ifier/MCJC-ifier.gs) - Data transformation and formatting for MCJC systems
+Midtown Community Justice Center integration tools
+- [`MCJC-ifier.gs`](./scripts/mcjc-ifier/MCJC-ifier.gs) - Data transformation and formatting for criteria-based forwarding to MCJC 
 - [`MainSheetChecker.gs`](./scripts/mcjc-ifier/MainSheetChecker.gs) - Validation and quality control for main data sheets
 
 #### [`group-calendar-generator/`](./scripts/group-calendar-generator/)
