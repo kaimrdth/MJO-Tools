@@ -78,6 +78,10 @@ This action enables quick navigation from the Appointments calendar to the **Sig
 | **Position**     | `Primary` |
 | **Display Name** | `"Sign In"` |
 
+### 🛎️ Front Desk: Signing Participants In
+![Home View Screenshot](../images/sign-in.png)
+
+
 ---
 
 ## 📎 Implementation Notes
@@ -86,10 +90,6 @@ This action enables quick navigation from the Appointments calendar to the **Sig
 - The confirmation prompt helps prevent mis-clicks during rapid client check-ins
 - The view dynamically updates throughout the day as new appointments are added or modified
 
-### 🧠 Next Steps
-- Drop your screenshots into `dashboard/home/images/` and rename them cleanly
-- Add the next subview or feature from the Home dashboard when you're ready (e.g. Waiting Area)
-- Document any additional actions or workflows specific to the Home view
 
 ---
 *This documentation reflects the current state of the Home view as of the latest AppSheet configuration.*
