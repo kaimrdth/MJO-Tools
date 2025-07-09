@@ -79,8 +79,10 @@ This action enables quick navigation from the Appointments calendar to the **Sig
 | **Display Name** | `"Sign In"` |
 
 ### 🛎️ Front Desk: Signing Participants In
-![Home View Screenshot](../images/sign-in.png)
+This is the form that the front desk uses to sign in participants who do not have an appointment. By indicating the "CM" (case manager), this triggers a Slack webhook which notifies the in-office channel about the visitor, and tags the assigned CM in the thread of that post.
 
+![Home View Screenshot](../images/sign-in.png)
+![Home View Screenshot](../images/slack-walkin-cm.png)
 
 ---
 
