@@ -38,14 +38,7 @@ The documentation below is organized by feature. Each folder contains:
 
 ---
 
-## 🛠️ Shared Logic
-
-See [`common/`](./common/) for reusable components:
-- Slices, user roles, shared formatting rules, and app-level behaviors
-
----
-
-## 📎 Notes
+## Notes
 
 - For media and demos, see [`media/`](../media/)
 - This dashboard is actively used by 35+ staff and supports services for over 3,000 participants annually.
