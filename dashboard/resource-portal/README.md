@@ -2,13 +2,13 @@
 
 ## Screenshots
 
-![Resource Portal Main View](./images/portal-main.png)
+![Resource Portal Main View](../images/portal-main.png)
 *Main gallery view showing service providers with filtering and search capabilities*
 
-![Resource Portal Detail View](./images/portal-detail.png)
+![Resource Portal Detail View](../images/portal-detail.png)
 *Detailed resource information with action buttons and contact details*
 
-![Resource Portal Map View](./images/portal-map.png)
+![Resource Portal Map View](../images/portal-map.png)
 *Interactive map showing service provider locations with integrated navigation*
 
 ## Overview
