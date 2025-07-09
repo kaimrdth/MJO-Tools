@@ -187,6 +187,5 @@ Each resource entry includes:
 3. **User Training**: Ensure all staff understand favorites and verification systems
 4. **Performance Monitoring**: Track usage patterns to identify most valuable resources
 
----
 
-*The Resource Portal represents a collaborative approach to service delivery, transforming institutional knowledge into an accessible, actionable database that directly benefits both staff efficiency and participant outcomes.*
+
