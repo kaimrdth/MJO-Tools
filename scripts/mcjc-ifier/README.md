@@ -6,6 +6,15 @@ A Google Apps Script automation tool for the Manhattan Justice Opportunities (MJ
 
 The MCJC-ifier automates the manual process of sorting cases, generating referral emails, and creating CSV reports when forwarding eligible cases to our partner organization, Midtown Community Justice Center. The tool processes case data based on predefined criteria and automatically categorizes cases into those that should be referred to MCJC versus those that remain with MJO.
 
+## Workflow 
+
+A resource coordinator will paste a table of cases to process. They click a button to run the MCJC-ifier which sends an email to them (it knows which email to use based on the user's Gmail account) containing:
+1. Drafts of the emails we send to MCJC with case information 
+2. An attached CSV of the cases we are sending to MCJC
+3. An attached CSV of the cases we are keeping
+
+What used to take 15 to 30 minutes of manually checking cases, sending emails, and creating tables now happens with a single click.
+
 ## Features
 
 ### Core Functionality (`MCJC-ifier.gs`)
