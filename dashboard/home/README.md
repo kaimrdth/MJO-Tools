@@ -1,22 +1,50 @@
 # 🏠 Home View
-The **Home** view is the default landing screen for staff, designed as a central dashboard for daily office operations. It dynamically displays the current date and aggregates multiple subviews that reflect real-time information on participants, appointments, and internal workflows. It features integration with AcuityScheduling API to pull in real-time appointment information for our practitioners. It also triggers Slack webhooks when using the Sign In feature, so staff in office are notified when clients check in at the front desk.  
+
+The **Home** view serves as the central operational dashboard for daily office operations, providing staff with a real-time overview of appointments, participant check-ins, and front desk workflows. This dashboard dynamically displays the current date and consolidates multiple data streams to create a comprehensive view of daily activities.
 
 ![Home View Screenshot](../images/home-view.png)
 
-## Key Features
-- **Real-time appointment calendar** with check-in capabilities
-- **Quick action buttons** for common front desk tasks
-- **Dynamic date display** that updates automatically
-- **Integrated workflows** connecting appointments to participant logging
-- **Slack notifications** for seamless team communication
+**[Jump to AppSheet Setup](#appsheet-setup)**
 
-This dashboard serves as the operational hub for daily client interactions, streamlining the check-in process and providing staff with immediate visibility into scheduled appointments and walk-ins.
+## Purpose & Overview
+
+The Home view functions as the primary landing screen for staff, designed to streamline daily client interactions and provide immediate visibility into scheduled appointments and walk-ins. It integrates with AcuityScheduling API to pull real-time appointment data and features automated workflows that connect appointment management to participant logging systems.
+
+Key capabilities include:
+- **Real-time appointment calendar** with integrated check-in functionality
+- **Quick action buttons** for common front desk operations
+- **Dynamic date display** that updates automatically throughout the day
+- **Seamless workflow integration** connecting appointments to participant tracking
+- **Automated notifications** via Slack webhooks for team coordination
+
+## Sign In & Check In Workflows
+
+The Home view supports two primary methods for managing participant arrivals, each designed for different scenarios:
+
+### Quick Check In Action
+The **Quick Check In** button appears directly within the appointment calendar for scheduled visits. When staff click this action, it automatically creates a new entry in the Participant Log table with pre-populated information from the appointment (participant name, appointment type, case manager, and notes). This streamlined process reduces friction during busy periods by eliminating manual data entry and immediately routing participants to the "Waiting Area" status.
+
+### Sign In Form (Walk-ins)
+For participants arriving without scheduled appointments, the **Sign In** navigation action routes staff to a dedicated form at the front desk. This comprehensive workflow captures detailed participant information and visit reasons, making it ideal for walk-in scenarios that require more context.
+
+![Sign In Form Screenshot](../images/sign-in.png)
+
+## Slack Integration
+
+Both check-in methods trigger automated Slack notifications to keep the team informed of participant arrivals:
+
+- **Scheduled appointments** (Quick Check In): Notifications are sent to the office channel when participants check in for their appointments
+- **Walk-in participants** (Sign In form): When a case manager is assigned during sign-in, the system sends a notification to the in-office channel and tags the specific case manager in a thread
+
+This integration ensures that case managers are immediately aware when their participants arrive, whether for scheduled appointments or unexpected visits.
+
+![Slack Notification Screenshot](../images/slack-walkin-cm.png)
 
 ---
 
-## Technical Configuration
+## AppSheet Setup
 
-### 🧱 View Setup
+### 🧱 View Configuration
 - **Type**: Dashboard
 - **Display Name Formula**:  
   ```appsheetscript
@@ -78,9 +106,8 @@ This action enables quick navigation from the Appointments calendar to the **Sig
 | **Position**     | `Primary` |
 | **Display Name** | `"Sign In"` |
 
-### 🛎️ Front Desk: Signing Participants In
-![Home View Screenshot](../images/sign-in.png)
-
+### 🛎️ Front Desk Sign In Configuration
+The Sign In form is configured to capture walk-in participants and trigger Slack notifications. When a case manager is selected during the sign-in process, the system automatically sends a notification to the in-office Slack channel and tags the assigned case manager in the thread.
 
 ---
 
@@ -89,7 +116,7 @@ This action enables quick navigation from the Appointments calendar to the **Sig
 - The Quick Check In action reduces friction by automatically logging arrivals with a timestamp and routing them to the "Waiting Area" flow
 - The confirmation prompt helps prevent mis-clicks during rapid client check-ins
 - The view dynamically updates throughout the day as new appointments are added or modified
-
+- Slack integration ensures seamless team communication for both scheduled and walk-in participants
 
 ---
 *This documentation reflects the current state of the Home view as of the latest AppSheet configuration.*
