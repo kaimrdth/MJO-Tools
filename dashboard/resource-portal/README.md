@@ -1,6 +1,46 @@
 # Resource Portal - MJO Dashboard
 
-[Jump to AppSheet Configuration](#appsheet-configuration)
+## Table of Contents
+
+1. [Overview](#overview)
+2. [Purpose and Functionality](#purpose-and-functionality)
+3. [Screenshots](#screenshots)
+4. [Key Features](#key-features)
+   - [Comprehensive Service Database](#1-comprehensive-service-database)
+   - [Interactive Map Integration](#2-interactive-map-integration)
+   - [Document Management](#3-document-management)
+   - [Data Verification System](#4-data-verification-system)
+   - [Personalized Favorites System](#5-personalized-favorites-system)
+   - [Quick Access Actions](#6-quick-access-actions)
+5. [User Interface Components](#user-interface-components)
+   - [Resource Display](#resource-display)
+   - [Action Buttons](#action-buttons)
+6. [Benefits for Staff](#benefits-for-staff)
+   - [Efficiency Improvements](#efficiency-improvements)
+   - [Quality Assurance](#quality-assurance)
+   - [Participant Experience](#participant-experience)
+7. [AppSheet Configuration](#appsheet-configuration)
+   - [View Configuration](#view-configuration)
+   - [Favorites System Implementation](#favorites-system-implementation)
+   - [Data Verification System](#data-verification-system-1)
+   - [Technical Implementation Notes](#technical-implementation-notes)
+8. [Best Practices](#best-practices)
+   - [For Staff Usage](#for-staff-usage)
+   - [For System Maintenance](#for-system-maintenance)
+
+---
+
+## Overview
+
+The Resource Portal is an internal database of NYC area service providers designed to streamline participant referrals and improve service delivery. This comprehensive resource management system serves as a collective knowledge base for staff, containing information about housing, healthcare, mental health, substance use, public benefits, immigration, employment, education, community service, legal support, and other essential services.
+
+[↑ Jump to top](#table-of-contents)
+
+## Purpose and Functionality
+
+The Resource Portal functions as a centralized repository where staff can quickly access and manage referral information for participants. It eliminates the need to search through scattered documents, bookmarks, or personal notes by providing a unified platform with up-to-date service provider information.
+
+[↑ Jump to top](#table-of-contents)
 
 ## Screenshots
 
@@ -13,17 +53,11 @@
 ![Resource Portal Map View](../images/portal-map.png)
 *Interactive map showing service provider locations with integrated navigation*
 
-## Overview
+[↑ Jump to top](#table-of-contents)
 
-The Resource Portal is an internal database of NYC area service providers designed to streamline participant referrals and improve service delivery. This comprehensive resource management system serves as a collective knowledge base for staff, containing information about housing, healthcare, mental health, substance use, public benefits, immigration, employment, education, community service, legal support, and other essential services.
+## Key Features
 
-## Purpose and Functionality
-
-The Resource Portal functions as a centralized repository where staff can quickly access and manage referral information for participants. It eliminates the need to search through scattered documents, bookmarks, or personal notes by providing a unified platform with up-to-date service provider information.
-
-### Key Features
-
-#### 1. **Comprehensive Service Database**
+### 1. **Comprehensive Service Database**
 - Housing assistance programs
 - Healthcare providers and clinics
 - Mental health services
@@ -35,36 +69,48 @@ The Resource Portal functions as a centralized repository where staff can quickl
 - Community service organizations
 - Legal aid and support services
 
-#### 2. **Interactive Map Integration**
+[↑ Jump to top](#table-of-contents)
+
+### 2. **Interactive Map Integration**
 - Visual location mapping for all service providers
 - Quick access to directions via integrated Google Maps
 - Geographic clustering to identify services by area
 - Street-level navigation for field staff and participants
 
-#### 3. **Document Management**
+[↑ Jump to top](#table-of-contents)
+
+### 3. **Document Management**
 - PDF upload capability for referral one-pagers
 - Centralized storage of service provider brochures
 - Quick access to program-specific documentation
 - Standardized referral forms and templates
 
-#### 4. **Data Verification System**
+[↑ Jump to top](#table-of-contents)
+
+### 4. **Data Verification System**
 - **Verify Button**: Timestamps resources with "Last verified X days/months ago"
 - Ensures data freshness and accuracy
 - Tracks verification history for quality control
 - Promotes regular data maintenance by staff
 
-#### 5. **Personalized Favorites System**
+[↑ Jump to top](#table-of-contents)
+
+### 5. **Personalized Favorites System**
 - **Favorite Button** (outlined heart icon): Bookmark frequently used resources
 - **Unfavorite Button** (solid heart icon): Remove bookmarked resources
 - Personal favorites list for each staff member
 - Conditional "My Favorite Resources" view based on user preferences
 
-#### 6. **Quick Access Actions**
+[↑ Jump to top](#table-of-contents)
+
+### 6. **Quick Access Actions**
 - **Link to Website**: Direct access to service provider websites
 - **Edit**: Modify resource information and details
 - **MAP**: Open location in mapping application
 - **Verify**: Update verification timestamp
 - **Favorite/Unfavorite**: Personal bookmark management
+
+[↑ Jump to top](#table-of-contents)
 
 ## User Interface Components
 
@@ -80,12 +126,16 @@ Each resource entry includes:
 - **Key Contact**: Primary point of contact for referrals
 - **Last Verified**: Data freshness indicator
 
+[↑ Jump to top](#table-of-contents)
+
 ### Action Buttons
 - **Edit**: Modify resource information
 - **Link to Website**: Direct web access
 - **Favorite/Unfavorite**: Personal bookmarking
 - **MAP**: Geographic navigation
 - **Verify**: Data verification timestamp
+
+[↑ Jump to top](#table-of-contents)
 
 ## Benefits for Staff
 
@@ -95,17 +145,23 @@ Each resource entry includes:
 - **Mobile Accessibility**: Field staff can access resources on-the-go
 - **Standardized Process**: Consistent referral procedures across all staff
 
+[↑ Jump to top](#table-of-contents)
+
 ### Quality Assurance
 - **Data Verification**: Regular updates ensure accuracy
 - **Collective Knowledge**: Shared database prevents information silos
 - **Documentation**: PDF storage for detailed program information
 - **Tracking**: Favorites system helps identify most useful resources
 
+[↑ Jump to top](#table-of-contents)
+
 ### Participant Experience
 - **Accurate Information**: Verified data reduces failed referrals
 - **Geographic Accessibility**: Map integration shows nearby services
 - **Comprehensive Options**: Wide range of service categories
 - **Current Details**: Up-to-date contact information and requirements
+
+[↑ Jump to top](#table-of-contents)
 
 ## AppSheet Configuration
 
@@ -142,6 +198,8 @@ Each resource entry includes:
   - **Open File (One Pager)**: Access uploaded PDFs
   - **View Map (Location)**: Geographic navigation
 
+[↑ Jump to top](#table-of-contents)
+
 ### Favorites System Implementation
 
 #### Favorite Action
@@ -161,17 +219,23 @@ Each resource entry includes:
 - **Unfavorite Button**: Solid heart icon (remove from favorites)
 - **Dynamic Display**: Shows appropriate button based on current favorite status
 
+[↑ Jump to top](#table-of-contents)
+
 ### Data Verification System
 - **Verify Button**: Updates LastVerifiedVirtual field
 - **Timestamp Format**: "Last verified X days/months ago"
 - **Automatic Calculation**: Virtual column calculates time since last verification
 - **Quality Control**: Encourages regular data maintenance
 
+[↑ Jump to top](#table-of-contents)
+
 ### Technical Implementation Notes
 - **User Authentication**: USEREMAIL() function for personalized features
 - **Conditional Logic**: Dynamic view display based on user preferences
 - **Referential Integrity**: Proper linking between Resource Portal and Favorites tables
 - **Data Validation**: Ensures accurate resource information through verification system
+
+[↑ Jump to top](#table-of-contents)
 
 ## Best Practices
 
@@ -181,11 +245,12 @@ Each resource entry includes:
 3. **Information Updates**: Edit resource details when changes are discovered
 4. **Documentation**: Upload relevant PDFs for comprehensive resource information
 
+[↑ Jump to top](#table-of-contents)
+
 ### For System Maintenance
 1. **Data Quality**: Encourage staff to verify resources during regular use
 2. **Content Updates**: Regular review of service provider information
 3. **User Training**: Ensure all staff understand favorites and verification systems
 4. **Performance Monitoring**: Track usage patterns to identify most valuable resources
 
-
-
+[↑ Jump to top](#table-of-contents)
