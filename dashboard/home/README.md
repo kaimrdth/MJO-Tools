@@ -24,6 +24,8 @@ The Home view supports two primary methods for managing participant arrivals, ea
 ### Quick Check In Action
 The **Quick Check In** button appears directly within the appointment calendar for scheduled visits. When staff click this action, it automatically creates a new entry in the Participant Log table with pre-populated information from the appointment (participant name, appointment type, case manager, and notes). This streamlined process reduces friction during busy periods by eliminating manual data entry and immediately routing participants to the "Waiting Area" status.
 
+![Home View Screenshot](../images/quick-checkin.png)
+
 ### Sign In Form (Walk-ins)
 For participants arriving without scheduled appointments, the **Sign In** navigation action routes staff to a dedicated form at the front desk. This comprehensive workflow captures detailed participant information and visit reasons, making it ideal for walk-in scenarios that require more context.
 
@@ -106,16 +108,11 @@ This action enables quick navigation from the Appointments calendar to the **Sig
 | **Position**     | `Primary` |
 | **Display Name** | `"Sign In"` |
 
-<<<<<<< HEAD
-### 🛎️ Front Desk Sign In Configuration
-The Sign In form is configured to capture walk-in participants and trigger Slack notifications. When a case manager is selected during the sign-in process, the system automatically sends a notification to the in-office Slack channel and tags the assigned case manager in the thread.
-=======
 ### 🛎️ Front Desk: Signing Participants In
 This is the form that the front desk uses to sign in participants who do not have an appointment. By indicating the "CM" (case manager), this triggers a Slack webhook which notifies the in-office channel about the visitor, and tags the assigned CM in the thread of that post.
 
 ![Home View Screenshot](../images/sign-in.png)
 ![Home View Screenshot](../images/slack-walkin-cm.png)
->>>>>>> 551c24b80ff433535313ae114974417f4cac3f6d
 
 ---
 
