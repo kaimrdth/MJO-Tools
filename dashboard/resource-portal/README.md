@@ -1,6 +1,6 @@
 # Resource Portal - MJO Dashboard
 
-**Quick Navigation:** [Jump to AppSheet Configuration](#appsheet-configuration)
+[Jump to AppSheet Configuration](#appsheet-configuration)
 
 ## Screenshots
 
