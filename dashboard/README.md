@@ -1,4 +1,4 @@
-# 🧭 MJO Dashboard
+# MJO Dashboard
 
 This folder documents the full AppSheet-based **MJO Dashboard**, an internal tool built to support daily office operations at Manhattan Justice Opportunities.
 
@@ -28,8 +28,6 @@ The documentation below is organized by feature. Each folder contains:
 | Feature            | Description                                                      |
 |--------------------|------------------------------------------------------------------|
 | [home](./home/)                  | Central dashboard aggregating key views and check-in tools         |
-| [waiting-area](./waiting-area/)         | Manages active participant flow and in-office triage              |
-| [participants](./participants/)         | Profile pages for each client, showing case details and status    |
 | [resource-portal](./resource-portal/)   | Curated database of community resources and referral tools        |
 | [supplies](./supplies/)               | Inventory of distributed items (e.g., MetroCards, hygiene kits)   |
 | [phones](./phones/)                   | Phone request and fulfillment workflow, integrated with Slack     |
