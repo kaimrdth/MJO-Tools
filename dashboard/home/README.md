@@ -106,8 +106,16 @@ This action enables quick navigation from the Appointments calendar to the **Sig
 | **Position**     | `Primary` |
 | **Display Name** | `"Sign In"` |
 
+<<<<<<< HEAD
 ### 🛎️ Front Desk Sign In Configuration
 The Sign In form is configured to capture walk-in participants and trigger Slack notifications. When a case manager is selected during the sign-in process, the system automatically sends a notification to the in-office Slack channel and tags the assigned case manager in the thread.
+=======
+### 🛎️ Front Desk: Signing Participants In
+This is the form that the front desk uses to sign in participants who do not have an appointment. By indicating the "CM" (case manager), this triggers a Slack webhook which notifies the in-office channel about the visitor, and tags the assigned CM in the thread of that post.
+
+![Home View Screenshot](../images/sign-in.png)
+![Home View Screenshot](../images/slack-walkin-cm.png)
+>>>>>>> 551c24b80ff433535313ae114974417f4cac3f6d
 
 ---
 
