@@ -27,9 +27,9 @@ The documentation below is organized by feature. Each folder contains:
 
 | Feature            | Description                                                      |
 |--------------------|------------------------------------------------------------------|
-| [home](./home/)                  | Central dashboard aggregating key views and check-in tools         |
-| [resource-portal](./resource-portal/)   | Curated database of community resources and referral tools        |
-| [supplies](./supplies/)               | Inventory of distributed items (e.g., MetroCards, hygiene kits)   |
+| [home](./home/)                  | Central dashboard aggregating key views, check-in tools, and team schedule       |
+| [resource-portal](./resource-portal/)   | Curated database of NYC service providers        |
+| [supplies](./supplies/)               | Inventory of distributed items (e.g., clothes, hygiene kits)   |
 | [phones](./phones/)                   | Phone request and fulfillment workflow, integrated with Slack     |
 | [attorney-rolodex](./attorney-rolodex/)| Reference view of public defenders and attorneys                   |
 | [donations](./donations/)             | Tracks received donations and inventory flow                      |
