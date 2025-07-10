@@ -1,0 +1,3588 @@
+### FILE: ./README.md
+# MJO-Tools
+
+This is a curated archive of internal tools developed for Manhattan Justice Opportunities (MJO), a court-based alternative-to-incarceration program in New York City. The tools were built to reduce manual overhead, streamline daily office operations, and improve service delivery to justice-involved participants. I tried to write and structure this repo to support both internal handoff and live as a public-facing portfolio of low-code systems work.
+
+## Structure
+
+### [`dashboard/`](./dashboard/)
+The MJO Dashboard: a centralized AppSheet web app used by 35+ staff members to coordinate daily operations and client care. Contains visual assets and configuration files for the main operational interface.
+
+### [`scripts/`](./scripts/)
+A comprehensive collection of Google Apps Script automations organized by function:
+
+
+## Technical Stack
+
+- **Frontend**: AppSheet (dashboard interface)
+- **Backend**: Google Apps Script (automation and data processing)
+- **Data Storage**: Google Sheets (primary data repository)
+- **Integration**: Custom APIs and data transformation tools. Primarily [AcuityScheduling](https://developers.acuityscheduling.com/) and [Slack Webhooks](https://api.slack.com/messaging/webhooks).
+
+## Usage
+
+These tools are designed to work within the Google Workspace ecosystem and integrate seamlessly with existing MJO workflows. Each script folder contains specific functionality that can be deployed independently or as part of the broader system.
+
+## License
+
+This project is licensed under the [MIT License](./LICENSE).
+
+## Maintainer
+
+Created by Kai Meredith.  
+Feel free to reach out at kaimrdth@gmail.com with questions or transfer inquiries.
+-e \n\n---\n\n
+### FILE: ./dashboard/special-instructions/README.md
+
+
+
+# 📝 Special Instructions | MJO Dashboard
+
+![Special Instructions View](../images/special-instructions.png)
+
+The **Special Instructions** feature allows supervisors to flag important context for specific participants — anything from safety considerations to helpful heads-up notes. This ensures that front desk staff and other team members are aware of critical information during check-in.
+
+## ✍️ Adding an Instruction
+
+Supervisors click the **+ Add** button and are prompted to fill out a short form:
+
+![Special Instructions Form](../images/special-instructions-form.png)
+
+Form Fields:
+- **Participant**
+- **Instruction**
+- **Category**: (`Frequent Visitor`, `Special Needs`, `Not Permitted in Office`, `Other`)
+- **Alert Supervisor?**: Yes / No
+
+Once submitted, the instruction is added to the `Special Instructions` table in the backend (Google Sheets).
+
+## ⚙️ How It Works
+
+When a participant is being signed in by front desk staff, the **Sign-In Form** conditionally shows a message if there's a matching instruction on file.
+
+This is powered by a **virtual column** in the `MJO Participant Log` table:
+
+- **Type**: `Show`
+- **Condition**:
+  ```appsheetscript
+  IN([Name], Special Instructions[Participant])
+  ```
+- **Content (Text)**:
+  ```appsheetscript
+  IF(
+    IN([Name], SELECT(Special Instructions[Participant], TRUE)),
+    IF(
+      ISNOTBLANK(
+        LOOKUP([Name], "Special Instructions", "Participant", "Instruction")
+      ),
+      CONCATENATE(
+        "Special Instruction: ",
+        LOOKUP([Name], "Special Instructions", "Participant", "Instruction")
+      ),
+      CONCATENATE(
+        "Category: ",
+        LOOKUP([Name], "Special Instructions", "Participant", "Category")
+      )
+    ),
+    ""
+  )
+  ```
+
+This allows relevant context to surface in real-time at the point of participant entry — helping the team make better decisions, safely and quickly.
+
+----e \n\n---\n\n
+### FILE: ./dashboard/home/README.md
+# 🏠 Home View
+
+The **Home** view serves as the central operational dashboard for daily office operations, providing staff with a real-time overview of appointments, participant check-ins, and front desk workflows. This dashboard dynamically displays the current date and consolidates multiple data streams to create a comprehensive view of daily activities.
+
+![Home View Screenshot](../images/home-view.png)
+
+**[Jump to AppSheet Setup](#appsheet-setup)**
+
+## Purpose & Overview
+
+The Home view functions as the primary landing screen for staff, designed to streamline daily client interactions and provide immediate visibility into scheduled appointments and walk-ins. It integrates with AcuityScheduling API to pull real-time appointment data and features automated workflows that connect appointment management to participant logging systems.
+
+Key capabilities include:
+- **Real-time appointment calendar** with integrated check-in functionality
+- **Quick action buttons** for common front desk operations
+- **Dynamic date display** that updates automatically throughout the day
+- **Seamless workflow integration** connecting appointments to participant tracking
+- **Automated notifications** via Slack webhooks for team coordination
+
+## Sign In & Check In Workflows
+
+The Home view supports two primary methods for managing participant arrivals, each designed for different scenarios:
+
+### Quick Check In Action
+The **Quick Check In** button appears directly within the appointment calendar for scheduled visits. When staff click this action, it automatically creates a new entry in the Participant Log table with pre-populated information from the appointment (participant name, appointment type, case manager, and notes). This streamlined process reduces friction during busy periods by eliminating manual data entry and immediately routing participants to the "Waiting Area" status.
+
+![quick check in](../images/quick-checkin.png)
+
+### Sign In Form (Walk-ins)
+For participants arriving without scheduled appointments, the **Sign In** navigation action routes staff to a dedicated form at the front desk. This comprehensive workflow captures detailed participant information and visit reasons, making it ideal for walk-in scenarios that require more context.
+
+![Sign In Form Screenshot](../images/sign-in.png)
+
+## Slack Integration
+
+Both check-in methods trigger automated Slack notifications to keep the team informed of participant arrivals:
+
+- **Scheduled appointments** (Quick Check In): Notifications are sent to the office channel when participants check in for their appointments
+- **Walk-in participants** (Sign In form): When a case manager is assigned during sign-in, the system sends a notification to the in-office channel and tags the specific case manager in a thread
+
+This integration ensures that case managers are immediately aware when their participants arrive, whether for scheduled appointments or unexpected visits.
+
+![Slack Notification Screenshot](../images/slack-walkin-cm.png)
+
+---
+
+## AppSheet Setup
+
+### 🧱 View Configuration
+- **Type**: Dashboard
+- **Display Name Formula**:  
+  ```appsheetscript
+  CONCATENATE("Home | ", TEXT(NOW(), "ddd MMM D"))
+  ```
+- **Visibility Condition**:
+  ```appsheetscript
+  useremail() <> "mjo80conf@gmail.com"
+  ```
+  *This hides the Home view on the iPad used for inventory.*
+
+### 🧩 Subview: Appointments
+**View Type**: Calendar  
+**Table**: `Appointments`
+
+**View Options:**
+| Setting        | Value               |
+|----------------|---------------------|
+| Start Date     | `Appointment Date`  |
+| Start Time     | `Appointment Time`  |
+| End Date       | `Appointment Date`  |
+| End Time       | `endtime`           |
+| Description    | `Type with Participant` |
+| Category       | `Case Manager`      |
+| Default View   | `Day`               |
+
+### ⚡ Action: Check In
+This **Quick Action** appears prominently in the Appointments calendar and creates a new row in the `Participant Log` table when staff mark someone as checked in.
+
+| Attribute         | Value |
+|------------------|-------|
+| **Type**          | `Data: add a new row to another table` |
+| **Target Table**  | `Participant Log` |
+| **Set Columns**   | See below |
+| **Position**      | `Prominent` |
+| **Show If**       | `OR(CONTAINS([Case Manager], "In-Person"), CONTAINS([Appointment Type], "In-Person"))` |
+| **Confirmation**  | `CONCATENATE("Check In ", [Participant], "?")` |
+
+**Set Column Values:**
+```text
+Name         = [Participant]
+Visit Reason = [Appointment Type]
+CM           = [Full Case Manager]
+Notes        = [Notes]
+Walk In Date = today()
+Check In     = timenow()
+Status       = "Waiting Area"
+```
+
+
+---
+
+## 📎 Implementation Notes
+- This dashboard is used live in office every day
+- The Quick Check In action reduces friction by automatically logging arrivals with a timestamp and routing them to the "Waiting Area" flow
+- The confirmation prompt helps prevent mis-clicks during rapid client check-ins
+- The view dynamically updates throughout the day as new appointments are added or modified
+- Slack integration ensures seamless team communication for both scheduled and walk-in participants
+
+---
+*This documentation reflects the current state of the Home view as of the latest AppSheet configuration.*-e \n\n---\n\n
+### FILE: ./dashboard/donations/README.md
+
+
+
+# 🧥 Donations | MJO Dashboard
+
+![Donations Screenshot](../images/donations.png)
+
+The **Donations** feature is a simple in/out inventory system that allows MJO staff to donate gently used clothing items and for case managers or social workers to distribute those items directly to participants.
+
+This system ensures that donations are searchable, categorized, and easy to track—avoiding duplicate distributions and improving client access to basic needs in real-time.
+
+## 🎁 Adding a Donation
+
+Staff click the **Add** button to open the **New Donation** form.
+
+![Donation Form](../images/donations-form.png)
+
+Form Fields:
+- **Category**
+- **Color**
+- **Size**
+- **Note**
+- **Photo**
+- **Gender (if applicable)**
+
+Once submitted, the item is added to the live donations catalog.
+
+## 📦 Distribution Workflow
+
+When a case manager or social worker finds an item a participant needs, they can click the **Distribute** action. This removes the item from the catalog, preventing it from being double-distributed.
+
+
+----e \n\n---\n\n
+### FILE: ./dashboard/phones/README.md
+
+
+
+# 📱 Phones | MJO Dashboard
+
+![Phones Screenshot](../images/phones.png)
+
+The **Phones** feature provides a structured, ticket-based system for requesting, tracking, and fulfilling mobile phone distribution requests for participants. It replaces the previous ad hoc method, which was error-prone and inefficient, with a more accountable and transparent workflow.
+
+## 🔄 Workflow Overview
+
+1. **Case Manager or Social Worker Action**
+   - Clicks the "+" button to submit a new phone request.
+   - Completes a form with:
+     - Participant Name
+     - Distribution Method (e.g., Delivery or Pick-Up)
+     - Notes
+     - Turnaround Time
+     - *(Conditional)* Participant Address (only shown if Distribution Method = Delivery)
+   - Upon submission, the request is added with a hidden `Status` field defaulting to **Pending**.
+
+2. **Request Visibility**
+   - Submitted requests appear in the **Requests in Progress** view.
+
+3. **Slack Notification – New Request**
+   - An AppSheet Bot is triggered:
+     - **Event Source**: App
+     - **Table**: Phone Distribution
+     - **Data Change Type**: Add
+     - **Action**: Call Webhook → Slack Workflow
+     - **Payload**:
+       ```json
+       {
+         "text": "New phone request: \nName: <<Participant Name>> \nPick Up Time: <<Turnaround Time>> \nDistribution Method: <<Distribution Method>> \nAddress: <<Participant Address>> \nNotes: <<Notes>> \nCase Manager: <<Case Manager>>",
+         "SlackID": "<<SlackID>>"
+       }
+       ```
+
+4. **Office Manager Fulfillment**
+   - The office manager checks the dashboard.
+   - Clicks **Update Status**, entering:
+     - Phone Number
+     - Update Notes
+   - Selects one of two actions:
+     - **Delivered**
+     - **Ready for Pick-Up**
+   - This updates the same row, maintaining linkage with the original request.
+
+5. **Slack Notification – Fulfillment**
+   - Another AppSheet Bot is triggered:
+     - **Event Source**: App
+     - **Table**: Phone Distribution
+     - **Data Change Type**: Updates
+     - **Action**: Call Webhook → Slack Workflow
+     - **Payload**:
+       ```json
+       {
+         "text": "The phone number for <<Participant Name>> is <<Phone Number>>. The phone is <<Status>>. Additional notes: <<Update Notes>>",
+         "slackID": "<<SlackID>>"
+       }
+       ```
+
+## ✅ Summary
+
+This feature introduces:
+- A **ticketed request flow** for better tracking
+- **Slack-based real-time notifications** to reduce delays
+- A **single-record update model** to keep all request data in one place
+
+It streamlines phone distribution and improves clarity across roles.
+
+## 🧭 System Diagram
+
+```plaintext
++-------------------------------+
+|  Case Manager / Social Worker |
++-------------------------------+
+               |
+               | 1. Submit Request via Form
+               v
++----------------------------------+
+|   Phone Distribution Table       |
+| (New record with Status=Pending) |
++----------------------------------+
+               |
+               | 2. AppSheet Bot (On Add)
+               v
++-------------------------------+
+|   Slack Webhook Notification  |
+|   (New Phone Request Alert)   |
++-------------------------------+
+               |
+               | 3. Office Manager Views Dashboard
+               v
++---------------------------------+
+|   Office Manager Updates        |
+|   (Phone Number, Notes, Status) |
++---------------------------------+
+               |
+               | 4. AppSheet Bot (On Update)
+               v
++-------------------------------+
+|   Slack Webhook Notification  |
+|   (Fulfillment Confirmation)  |
++-------------------------------+
+```
+
+----e \n\n---\n\n
+### FILE: ./dashboard/README.md
+# MJO Dashboard
+
+This folder documents the full AppSheet-based **MJO Dashboard**, an internal tool built to support daily office operations at Manhattan Justice Opportunities.
+
+The dashboard serves as a centralized platform for staff to manage client appointments, track participant flow, fulfill phone requests, access resources, and coordinate real-time tasks — all from a single interface. It integrates with Slack and AcuityScheduling to push and pull appointment information as well as send messages based on business logic.
+
+![dashboard screenshot](./images/dashboard.png)
+
+---
+
+## ⚙️ Platform Overview
+
+- **Frontend**: AppSheet views and behavior logic
+- **Backend**: Google Sheets (data tables and schemas)
+- **Automation Layer**: AppSheet bots and custom Apps Script functions
+- **Integrations**: Slack API, AcuityScheduling API
+
+The documentation below is organized by feature. Each folder contains:
+- View definitions and UX logic
+- Table schemas and data relationships
+- Conditional visibility rules, actions, and virtual columns
+- Any relevant scripts or backend automation
+
+---
+
+## 📂 Feature Breakdown
+
+| Feature            | Description                                                      |
+|--------------------|------------------------------------------------------------------|
+| [home](./home/)                  | Central dashboard aggregating key views, check-in tools, and team schedule       |
+| [resource-portal](./resource-portal/)   | Curated database of NYC service providers        |
+| [supplies](./supplies/)               | Inventory of distributed items (e.g., clothes, hygiene kits)   |
+| [phones](./phones/)                   | Phone request and fulfillment workflow, integrated with Slack     |
+| [donations](./donations/)             | Tracks received donations and inventory flow                      |
+| [mjo-staff](./mjo-staff/)             | Staff list, permissions, and user-level customization              |
+| [special-instructions](./special-instructions/)| Records participant-specific precautions or notes           |
+
+---
+
+## Notes
+
+- This dashboard is actively used by 35+ staff and supports services for over 3,000 participants annually.
+- View-by-view documentation will continue to evolve as features are added or refactored.
+-e \n\n---\n\n
+### FILE: ./dashboard/mjo-staff/README.md
+
+
+
+
+# 👥 MJO Staff Directory | MJO Dashboard
+![Staff Directory Screenshot](../images/mjostaff.png)
+
+The **MJO Staff Directory** is more than just a contact list — it's a critical configuration tool that powers core functionality across the dashboard. It centralizes key identifiers needed for Slack messaging, user sessions, and appointment syncing.
+
+## ➕ Adding a Staff Member
+
+Supervisors add new staff via the **Add+** button, which opens a form with the following fields:
+
+- **Name**
+- **SlackID**
+- **Gmail**
+- **CalendarID**
+- **Team**
+- **Status**
+
+### 🔑 Required Fields and Their Purpose
+
+- **SlackID**  
+  Enables automated Slack notifications, such as direct messages when a client walks in. Without this, the system can't route alerts to the right person.
+
+- **Gmail**  
+  Used to authenticate staff access to the dashboard. All session-based filtering and role-based logic depends on matching this field.
+
+- **CalendarID**  
+  Links the staff member’s Acuity Scheduling calendar. This allows the Home view to pull in their upcoming appointments and ensures client check-ins trigger Slack alerts correctly.
+
+## ✅ Summary
+
+Adding new hires accurately ensures they are:
+- Able to sign in and use the dashboard
+- Properly notified of their clients’ activity
+- Visible in team-wide logic like filtering and calendar syncing
+
+Even though the interface is simple, this directory underpins several of the dashboard’s most important features.
+-e \n\n---\n\n
+### FILE: ./dashboard/supplies/README.md
+# Supplies - MJO Dashboard
+
+[Jump to AppSheet Configuration](#appsheet-configuration)
+
+## Overview
+
+The Supplies feature is a real-time inventory management system that allows staff to check availability and check out items for clients. This streamlined supply distribution system maintains accurate inventory levels while providing a user-friendly interface for staff to quickly locate and distribute necessary supplies to participants.
+
+
+## Purpose and Functionality
+
+The Supplies system functions as a centralized inventory management tool where staff can view real-time supply availability, search for specific items, and check out supplies for client distribution. It eliminates inventory confusion and ensures accurate tracking of supply distribution across all staff members.
+
+## Screenshots
+
+![Supplies Main View](../images/supplies.png)
+*Main supplies interface showing inventory levels with search and cart functionality*
+
+[↑ Jump to top](#supplies---mjo-dashboard)
+
+## Key Features
+
+### 1. **Real-Time Inventory Tracking**
+- Live inventory level updates across all user sessions
+- Automatic quantity adjustments upon checkout
+
+### 2. **Searchable Supply Database**
+- Quick search functionality across all supply items
+- Filter by category, item name, or availability
+
+[↑ Jump to top](#supplies---mjo-dashboard)
+
+### 3. **Shopping Cart System**
+- **Add to Cart**: Select items for checkout
+- **Conditional Cart Display**: Cart appears only when items are selected
+- **Quantity Management**: Adjust quantities before checkout
+- **Session-Based**: Individual carts per user session
+
+[↑ Jump to top](#supplies---mjo-dashboard)
+
+### 4. **Checkout Process**
+- **Confirm Checkout**: Final confirmation before inventory update
+- **Transaction Recording**: Track who checked out what items
+- **Clear Cart**: Reset cart after successful checkout
+
+
+### 5. **User Session Management**
+- **Individual Cart Sessions**: Each staff member has their own cart
+- **Concurrent Access**: Multiple staff can use system simultaneously
+
+[↑ Jump to top](#supplies---mjo-dashboard)
+
+## User Interface Components
+
+### Supply Display
+Each supply item includes:
+- **Item Name**: Primary identifier for supply
+- **Category**: Classification of supply type
+- **Current Inventory**: Real-time quantity available
+- **Item Description**: Detailed information about the supply
+- **Location**: Storage location within facility
+- **Add to Cart Button**: Selection control for checkout
+
+### Cart Interface
+The shopping cart displays:
+- **Selected Items**: List of items ready for checkout
+- **Quantities**: Number of each item to be checked out
+- **Inventory Impact**: Shows remaining quantities after checkout
+- **Remove Items**: Option to remove items from cart
+- **Checkout Button**: Confirm and process distribution
+
+[↑ Jump to top](#supplies---mjo-dashboard)
+
+### Action Controls
+- **Search Bar**: Find specific supplies quickly
+- **Add to Cart**: Select items for distribution
+- **Quantity Adjustment**: Modify checkout quantities
+- **Remove from Cart**: Remove unwanted items
+- **Checkout**: Complete the distribution process
+
+
+## AppSheet Configuration
+
+### View Configuration
+
+#### View Settings
+- **View Name**: Supplies
+- **View Type**: Gallery view with inventory display
+- **Data Source**: Supplies Inventory table
+- **Position**: Primary navigation position
+
+#### Display Options
+- **Primary Header**: Item Name
+- **Secondary Header**: Category
+- **Summary Column**: Current Inventory (with quantity display)
+- **Search Configuration**: Enabled across item names and categories
+
+#### Sorting and Grouping
+- **Sort by**: Item Name (Ascending)
+- **Group by**: 
+  - Category (Ascending)
+  - Item Name (Ascending)
+- **Group aggregate**: SUM of Current Inventory
+
+#### Action Bar Configuration
+- **Show action bar**: Enabled
+- **Actions**: Manual selection with the following options:
+  - **Add to Cart**: Adds item to user's checkout cart
+  - **View Details**: Display full item information
+  - **Check Inventory**: Real-time inventory status
+
+[↑ Jump to top](#supplies---mjo-dashboard)
+
+### Cart System Implementation
+
+#### Cart Table Structure
+- **CartID**: Unique identifier for each cart entry
+- **UserEmail**: Links cart to specific user session
+- **ItemID**: References supply item
+- **Quantity**: Number of items in cart
+- **DateAdded**: Timestamp of cart addition
+
+#### Add to Cart Action
+- **Function**: Adds new row to Supplies Cart table
+- **Referenced Data**: ItemID of selected supply
+- **User Assignment**: Automatically uses USEREMAIL() function
+- **Quantity Default**: 1 (adjustable in cart view)
+
+#### Cart Display Logic
+- **Conditional Visibility**: `COUNT(FILTER("Supplies Cart", [UserEmail] = USEREMAIL())) > 0`
+- **User-Specific**: Shows only current user's cart items
+- **Real-Time Updates**: Reflects changes immediately
+
+
+
+### Technical Implementation Notes
+- **User Authentication**: USEREMAIL() function for session management
+- **Session Isolation**: User-specific cart functionality
+- **Referential Integrity**: Proper linking between Supplies and Cart tables
+- **Data Validation**: Prevents negative inventory levels
+- **Concurrent Processing**: Handles multiple simultaneous users
+
+### Slack Integration
+
+A Slack integration is configured to notify the office manager when supply quantities fall to low levels. Specifically, when the quantity of any item reaches 3, a direct message is sent automatically.
+
+#### Configuration Details
+
+- **AppSheet Bot**
+  - **Event Source**: App
+  - **Table**: Inventory
+  - **Data Change Type**: Updates
+  - **Condition**: `[Quantity] = 3`
+- **Action**
+  - **Type**: Call a Webhook
+  - **Destination**: Slack webhook that triggers a Slack workflow
+  - **HTTP Request JSON Payload**:
+    ```json
+    {
+      "text": "There are 3 left of <<Item>>."
+    }
+    ```
+
+[↑ Jump to top](#supplies---mjo-dashboard)
+
+## Best Practices
+
+### For Staff Usage
+1. **Cart Management**: Review cart contents before checkout
+2. **Quantity Accuracy**: Ensure correct quantities are selected
+3. **Immediate Checkout**: Complete checkout promptly to free up inventory
+4. **Search Utilization**: Use search function for quick item location
+
+[↑ Jump to top](#supplies---mjo-dashboard)
+
+### For Inventory Management
+1. **Regular Restocking**: Monitor inventory levels for reorder needs
+2. **Accurate Counts**: Ensure physical inventory matches system records
+3. **Category Organization**: Maintain clear categorization for easy searching
+4. **Usage Monitoring**: Track distribution patterns for better planning
+
+[↑ Jump to top](#supplies---mjo-dashboard)-e \n\n---\n\n
+### FILE: ./dashboard/resource-portal/README.md
+# Resource Portal - MJO Dashboard
+
+## Overview
+
+The Resource Portal is an internal database of NYC area service providers designed to streamline participant referrals and improve service delivery. This comprehensive resource management system serves as a collective knowledge base for staff, containing information about housing, healthcare, mental health, substance use, public benefits, immigration, employment, education, community service, legal support, and other essential services.
+
+## Purpose and Functionality
+
+The Resource Portal functions as a centralized repository where staff can quickly access and manage referral information for participants. It eliminates the need to search through scattered documents, bookmarks, or personal notes by providing a unified platform with up-to-date service provider information.
+
+## Screenshots
+
+![Resource Portal Main View](../images/portal-main.png)
+*Main gallery view showing service providers with filtering and search capabilities*
+
+![Resource Portal Detail View](../images/portal-detail.png)
+*Detailed resource information with action buttons and contact details*
+
+![Resource Portal Map View](../images/portal-map.png)
+*Interactive map showing service provider locations with integrated navigation*
+
+[↑ Jump to top](#table-of-contents)
+
+## Key Features
+
+### 1. **Comprehensive Service Database**
+- Housing assistance programs
+- Healthcare providers and clinics
+- Mental health services
+- Substance use treatment facilities
+- Public benefits enrollment support
+- Immigration legal services
+- Employment and job training programs
+- Educational institutions and GED programs
+- Community service organizations
+- Legal aid and support services
+
+### 2. **Interactive Map Integration**
+- Visual location mapping for all service providers
+- Quick access to directions via integrated Google Maps
+- Geographic clustering to identify services by area
+- Street-level navigation for field staff and participants
+
+### 3. **Document Management**
+- PDF upload capability for referral one-pagers
+- Centralized storage of service provider brochures
+- Quick access to program-specific documentation
+- Standardized referral forms and templates
+
+
+### 4. **Data Verification System**
+- **Verify Button**: Timestamps resources with "Last verified X days/months ago"
+- Ensures data freshness and accuracy
+- Tracks verification history for quality control
+- Promotes regular data maintenance by staff
+
+[↑ Jump to top](#table-of-contents)
+
+### 5. **Personalized Favorites System**
+- **Favorite Button** (outlined heart icon): Bookmark frequently used resources
+- **Unfavorite Button** (solid heart icon): Remove bookmarked resources
+- Personal favorites list for each staff member
+- Conditional "My Favorite Resources" view based on user preferences
+
+
+### 6. **Quick Access Actions**
+- **Link to Website**: Direct access to service provider websites
+- **Edit**: Modify resource information and details
+- **MAP**: Open location in mapping application
+- **Verify**: Update verification timestamp
+- **Favorite/Unfavorite**: Personal bookmark management
+
+
+## User Interface Components
+
+### Resource Display
+Each resource entry includes:
+- **Organization Logo**: Visual identification (auto-assigned)
+- **Organization Name**: Primary identifier
+- **Service Category**: Classification of services provided
+- **Contact Information**: Phone numbers and email addresses
+- **Address**: Physical location with map integration
+- **Referral Process**: Step-by-step referral instructions
+- **Eligibility Requirements**: Target population and criteria
+- **Key Contact**: Primary point of contact for referrals
+- **Last Verified**: Data freshness indicator
+
+
+### Action Buttons
+- **Edit**: Modify resource information
+- **Link to Website**: Direct web access
+- **Favorite/Unfavorite**: Personal bookmarking
+- **MAP**: Geographic navigation
+- **Verify**: Data verification timestamp
+
+[↑ Jump to top](#table-of-contents)
+
+## AppSheet Configuration
+
+### View Configuration
+
+#### View Settings
+- **View Name**: Resource Portal
+- **View Type**: Gallery view with card layout
+- **Data Source**: Resource Portal table
+- **Position**: Next (secondary navigation position)
+
+#### Display Options
+- **Image Shape**: Full Image (selected from Square, Round, or Full options)
+- **Main Image**: Auto assign (Logo Image) field
+- **Primary Header**: Auto assign (Organization name)
+- **Secondary Header**: Auto assign (Service Name)
+- **Summary Column**: LastVerifiedVirtual (displays verification status)
+
+#### Sorting and Grouping
+- **Sort by**: Organization name (Ascending)
+- **Group by**: 
+  - Service Category (Ascending)
+  - Organization name (Ascending)
+  - _RowNumber (Ascending)
+- **Group aggregate**: COUNT (displays number of resources per group)
+
+#### Action Bar Configuration
+- **Show action bar**: Enabled
+- **Actions**: Manual selection with the following options:
+  - **Verify**: Updates verification timestamp
+  - **Unfavorite 2**: Removes from favorites (solid heart icon)
+  - **Favorite**: Adds to favorites (outlined heart icon)
+  - **Open Url (Website)**: Direct website access
+  - **Open File (One Pager)**: Access uploaded PDFs
+  - **View Map (Location)**: Geographic navigation
+
+[↑ Jump to top](#table-of-contents)
+
+### Favorites System Implementation
+
+#### Favorite Action
+- **Function**: Adds new row to Resource Portal Favorites table
+- **Referenced Data**: ResourceID of current resource
+- **User Assignment**: Automatically uses USEREMAIL() function
+- **Conditional Display**: Shows "My Favorite Resources" view when COUNT(FILTER("Resource Portal Favorites", [User] = USEREMAIL())) > 0
+
+#### Unfavorite Action (Complex Implementation)
+- **Referenced Rows**: `SELECT(Resource Portal Favorites [FavID], AND([ResourceID] = [_THISROW].[ResourceID], [User] = USEREMAIL()))`
+- **Referenced Action**: Delete
+- **Show Condition**: `IN([ResourceID], SELECT(Resource Portal Favorites [ResourceID], [User] = USEREMAIL()))`
+- **Visual Indicator**: Solid heart icon (vs. outlined heart for favorite)
+
+#### Visual Differentiation
+- **Favorite Button**: Outlined heart icon (add to favorites)
+- **Unfavorite Button**: Solid heart icon (remove from favorites)
+- **Dynamic Display**: Shows appropriate button based on current favorite status
+
+[↑ Jump to top](#table-of-contents)
+
+### Data Verification System
+- **Verify Button**: Updates LastVerifiedVirtual field
+- **Timestamp Format**: "Last verified X days/months ago"
+- **Automatic Calculation**: Virtual column calculates time since last verification
+- **Quality Control**: Encourages regular data maintenance
+
+[↑ Jump to top](#table-of-contents)
+
+### Technical Implementation Notes
+- **User Authentication**: USEREMAIL() function for personalized features
+- **Conditional Logic**: Dynamic view display based on user preferences
+- **Referential Integrity**: Proper linking between Resource Portal and Favorites tables
+- **Data Validation**: Ensures accurate resource information through verification system
+
+[↑ Jump to top](#table-of-contents)
+
+## Best Practices
+
+### For Staff Usage
+1. **Regular Verification**: Use verify button when contacting service providers
+2. **Favorite Management**: Bookmark frequently used resources for quick access
+3. **Information Updates**: Edit resource details when changes are discovered
+4. **Documentation**: Upload relevant PDFs for comprehensive resource information
+
+
+### For System Maintenance
+1. **Data Quality**: Encourage staff to verify resources during regular use
+2. **Content Updates**: Regular review of service provider information
+3. **User Training**: Ensure all staff understand favorites and verification systems
+4. **Performance Monitoring**: Track usage patterns to identify most valuable resources
+
+[↑ Jump to top](#table-of-contents)-e \n\n---\n\n
+### FILE: ./scripts/group-calendar-generator/README.md
+# Acuity Calendar Generator
+
+A Google Apps Script tool that automatically generates visual monthly calendars for group classes by fetching data from Acuity Scheduling and organizing it in Google Sheets.
+
+![Group Calendar Menu](groupcalendarmenu.png)
+
+## Features
+
+- **Monthly Calendar Generation**: Creates formatted monthly calendars showing all group classes
+- **Acuity Integration**: Fetches class data directly from Acuity Scheduling API
+- **Multiple Group Support**: Handles multiple groups with different appointment types
+- **Rich Formatting**: Color-coded classes, formatted time display, and availability tracking
+- **Facilitator Display**: Shows assigned facilitators for each class
+- **Easy Setup**: Simple menu-driven interface with API credential management
+
+## Prerequisites
+
+- Google Sheets access
+- Acuity Scheduling account with API access
+- Basic understanding of Google Apps Script (for initial setup)
+
+## Installation
+
+1. **Create a new Google Sheets document**
+2. **Open Apps Script**:
+   - Go to `Extensions` → `Apps Script`
+3. **Replace the default code**:
+   - Delete the existing `myFunction()` code
+   - Paste the entire script from the provided file
+4. **Save the project**:
+   - Give it a name like "Acuity Calendar Generator"
+   - Save the project (Ctrl+S or Cmd+S)
+
+## Setup
+
+### 1. Create the Group Lookup Table
+
+In your Google Sheets document, create a sheet named **"Group Lookup Table"** with the following structure:
+
+| Column A (Group Name) | Column B (Appointment Type ID) | Column C (Facilitator) |
+|----------------------|-------------------------------|----------------------|
+| Justice Circle       | 12345                         | John Smith           |
+| Fresh Start          | 67890                         | Jane Doe             |
+| Wellness Check-In    | 54321                         | Dr. Johnson          |
+
+**To find your Appointment Type IDs:**
+1. Log into your Acuity Scheduling account
+2. Go to Business Settings → Appointment Types
+3. Click on each appointment type to see its ID in the URL
+
+### 2. Set Up API Credentials
+
+1. **Get your Acuity API credentials**:
+   - Go to your Acuity account settings
+   - Navigate to Integrations → API
+   - Note your User ID and generate an API Key
+
+2. **Test API Connection**:
+   - In Google Sheets, use the menu: `📅 Generate Group Calendars` → `Test API Connection`
+   - Enter your User ID and API Key when prompted
+   - The system will test the connection and save your credentials securely
+
+## Usage
+
+### Generating a Monthly Calendar
+
+1. **Open your Google Sheets document**
+2. **Access the menu**: `📅 Generate Group Calendars` → `Generate Groups Calendar`
+3. **Enter the month and year** (e.g., "July 2025", "December 2024")
+4. **Confirm generation**
+5. **Wait for processing** - the script will:
+   - Fetch class data from Acuity
+   - Create/update the calendar sheet
+   - Format and color-code the results
+
+### Calendar Features
+
+Each calendar includes:
+- **Day-by-day layout** with classes organized by date
+- **Class information** for each session:
+  - Class name
+  - Time
+  - Facilitator
+  - Available slots (e.g., "5/10" meaning 5 available out of 10 total)
+- **Color coding** by group type
+- **Generation timestamp** for tracking when the calendar was created
+
+## Configuration
+
+### Customizing Colors
+
+To change the colors for different groups, modify the `getClassColor()` function:
+
+```javascript
+function getClassColor(groupName) {
+  var colorMap = {
+    'Justice Circle': '#1f77b4',      // Blue
+    'Fresh Start': '#ff7f0e',         // Orange
+    'Wellness Check-In': '#2ca02c',   // Green
+    'Resilience Builders': '#d62728', // Red
+    'Pathways Group': '#9467bd'       // Purple
+  };
+  return colorMap[groupName] || '#000000';
+}
+```
+
+### Adding New Groups
+
+1. Add the new group to your "Group Lookup Table" sheet
+2. Get the Appointment Type ID from Acuity
+3. Add the facilitator name
+4. Optionally add a color in the `getClassColor()` function
+
+## Troubleshooting
+
+### Common Issues
+
+**"Group Lookup Table sheet not found"**
+- Ensure you have a sheet named exactly "Group Lookup Table"
+- Check that it contains the required columns (Group Name, Appointment Type ID, Facilitator)
+
+**"API connection failed"**
+- Verify your Acuity API credentials are correct
+- Check that your API key hasn't expired
+- Ensure your Acuity account has API access enabled
+
+**"No classes found for this month"**
+- Verify the month/year format (e.g., "July 2025")
+- Check that classes are actually scheduled in Acuity for that month
+- Ensure Appointment Type IDs are correct
+
+**Script timeout errors**
+- This can happen with large amounts of data
+- Try generating calendars for individual months rather than multiple months at once
+
+### Getting Help
+
+1. **Check the execution log**:
+   - In Apps Script, go to `Execution log` to see detailed error messages
+2. **Test individual components**:
+   - Use "Test API Connection" to verify your credentials
+   - Check that your Group Lookup Table has the correct format
+3. **Verify your Acuity setup**:
+   - Ensure classes are published and visible in your Acuity calendar
+
+## API Rate Limits
+
+The script includes a 300ms delay between API calls to respect Acuity's rate limits. For accounts with many groups, calendar generation may take a few minutes.
+
+## Security Notes
+
+- API credentials are stored securely in Google Apps Script's PropertiesService
+- Credentials are not visible in the spreadsheet or shared with other users
+- Each user must set up their own API credentials
+
+## Version History
+
+- **v1.0**: Initial release with basic calendar generation
+- **v1.1**: Added color coding and facilitator display
+- **v1.2**: Improved error handling and user interface
+
+-e \n\n---\n\n
+### FILE: ./scripts/group-calendar-generator/Calendar-Generator.gs
+// === CUSTOM MENU SETUP ===
+function onOpen() {
+  var ui = SpreadsheetApp.getUi();
+  ui.createMenu('📅 Generate Group Calendars')
+    .addItem('Generate Groups Calendar', 'generateGroupsCalendar')
+    .addSeparator()
+    .addItem('Test API Connection', 'testApiConnection')
+    .addToUi();
+}
+
+// NOTE: API KEY AND USER ID GO IN SCRIPT PROPERTIES FOR SECURE STORAGE
+
+// === MAIN CALENDAR GENERATION FUNCTION ===
+function generateGroupsCalendar() {
+  var ui = SpreadsheetApp.getUi();
+  
+  // Prompt user for month and year
+  var result = ui.prompt('Generate Groups Calendar', 
+    'Enter the month and year (e.g., "July 2025", "December 2024"):', 
+    ui.ButtonSet.OK_CANCEL);
+  
+  if (result.getSelectedButton() !== ui.Button.OK) {
+    return; // User cancelled
+  }
+  
+  var userInput = result.getResponseText().trim();
+  
+  // Parse the input
+  var parsedDate = parseMonthYear(userInput);
+  if (!parsedDate) {
+    ui.alert('Invalid Format', 
+      'Please use the format "Month Year" (e.g., "July 2025", "December 2024")', 
+      ui.ButtonSet.OK);
+    return;
+  }
+  
+  var monthName = parsedDate.monthName;
+  var year = parsedDate.year;
+  var monthNum = parsedDate.monthNum;
+  var daysInMonth = parsedDate.daysInMonth;
+  var monthString = `${year}-${monthNum.toString().padStart(2, '0')}`;
+  var sheetName = `${monthName} ${year}`;
+  
+  // Show confirmation
+  var confirmResult = ui.alert('Confirm Generation', 
+    `Generate calendar for ${sheetName}?\n\nThis will create/update the "${sheetName}" tab.`, 
+    ui.ButtonSet.YES_NO);
+  
+  if (confirmResult !== ui.Button.YES) {
+    return;
+  }
+  
+  generateMonthlyCalendar(sheetName, monthString, daysInMonth, monthName, year);
+}
+
+// === MONTH/YEAR PARSING ===
+function parseMonthYear(input) {
+  // Remove extra whitespace and split
+  var parts = input.split(/\s+/);
+  
+  if (parts.length !== 2) {
+    return null;
+  }
+  
+  var monthInput = parts[0].toLowerCase();
+  var yearInput = parts[1];
+  
+  // Validate year
+  var year = parseInt(yearInput);
+  if (isNaN(year) || year < 2020 || year > 2030) {
+    return null;
+  }
+  
+  // Month mapping (supports both full names and abbreviations)
+  var monthMap = {
+    'january': 1, 'jan': 1,
+    'february': 2, 'feb': 2,
+    'march': 3, 'mar': 3,
+    'april': 4, 'apr': 4,
+    'may': 5,
+    'june': 6, 'jun': 6,
+    'july': 7, 'jul': 7,
+    'august': 8, 'aug': 8,
+    'september': 9, 'sep': 9, 'sept': 9,
+    'october': 10, 'oct': 10,
+    'november': 11, 'nov': 11,
+    'december': 12, 'dec': 12
+  };
+  
+  var monthNum = monthMap[monthInput];
+  if (!monthNum) {
+    return null;
+  }
+  
+  // Get proper month name (capitalize first letter)
+  var monthNames = ['', 'January', 'February', 'March', 'April', 'May', 'June',
+                   'July', 'August', 'September', 'October', 'November', 'December'];
+  var monthName = monthNames[monthNum];
+  
+  // Calculate days in month
+  var daysInMonth = new Date(year, monthNum, 0).getDate();
+  
+  return {
+    monthName: monthName,
+    year: year,
+    monthNum: monthNum,
+    daysInMonth: daysInMonth
+  };
+}
+
+// === SHEET MANAGEMENT ===
+function getOrCreateSheet(sheetName) {
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = spreadsheet.getSheetByName(sheetName);
+  
+  if (!sheet) {
+    // Create the sheet
+    sheet = spreadsheet.insertSheet(sheetName);
+    Logger.log(`Created new sheet: ${sheetName}`);
+  } else {
+    Logger.log(`Using existing sheet: ${sheetName}`);
+  }
+  
+  return sheet;
+}
+
+// === MAIN CALENDAR GENERATION LOGIC ===
+function generateMonthlyCalendar(sheetName, monthString, daysInMonth, monthName, year) {
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  
+  // Show progress to user
+  SpreadsheetApp.getActiveSpreadsheet().toast('Fetching class data from Acuity...', 'Generating Calendar', 10);
+
+  // Access the lookup sheet
+  var groupLookupSheet = spreadsheet.getSheetByName("Group Lookup Table");
+  
+  if (!groupLookupSheet) {
+    SpreadsheetApp.getUi().alert('Error: "Group Lookup Table" sheet not found.');
+    return;
+  }
+  
+  // Get or create the calendar sheet
+  var calendarSheet = getOrCreateSheet(sheetName);
+
+  // Get the data from "Group Lookup Table" sheet
+  var groupData = groupLookupSheet.getDataRange().getValues();
+  
+  // Build a mapping of Group -> {Appointment Type ID, Facilitator}
+  var groupToAppointmentTypeId = {};
+  for (var i = 1; i < groupData.length; i++) {
+    var group = groupData[i][0];
+    var appointmentTypeId = groupData[i][1];
+    var facilitator = groupData[i][2]; // Column C
+    if (group && appointmentTypeId) {
+      groupToAppointmentTypeId[group] = {
+        appointmentTypeId: appointmentTypeId.toString(),
+        facilitator: facilitator || 'TBD'
+      };
+    }
+  }
+
+  if (Object.keys(groupToAppointmentTypeId).length === 0) {
+    SpreadsheetApp.getUi().alert('No group data found in "Group Lookup Table" sheet.');
+    return;
+  }
+
+  // Retrieve Acuity API credentials
+  var scriptProperties = PropertiesService.getScriptProperties();
+  var apiKey = scriptProperties.getProperty('ACUITY_API_KEY');
+  var acuityUserId = scriptProperties.getProperty('ACUITY_USER_ID');
+
+  if (!apiKey || !acuityUserId) {
+    SpreadsheetApp.getUi().alert('Error: Acuity API credentials not set in script properties.\n\nPlease run "Test API Connection" first.');
+    return;
+  }
+
+  // Fetch all classes for the month
+  var allClassesData = fetchClassesForMonth(groupToAppointmentTypeId, monthString, apiKey, acuityUserId);
+  
+  if (allClassesData.length === 0) {
+    SpreadsheetApp.getActiveSpreadsheet().toast('No classes found for this month.', 'Calendar Generated', 3);
+  } else {
+    SpreadsheetApp.getActiveSpreadsheet().toast(`Found ${allClassesData.length} classes. Building calendar...`, 'Processing', 5);
+  }
+
+  // Build the calendar layout
+  buildCalendarLayout(calendarSheet, allClassesData, monthString, daysInMonth, monthName, year);
+  
+  // Switch to the generated sheet
+  spreadsheet.setActiveSheet(calendarSheet);
+  
+  SpreadsheetApp.getActiveSpreadsheet().toast(`${sheetName} calendar generated successfully!`, 'Complete', 3);
+}
+
+// === DATA FETCHING ===
+function fetchClassesForMonth(groupToAppointmentTypeId, monthString, apiKey, acuityUserId) {
+  var allClassesData = [];
+
+  // Loop through each group and fetch their classes
+  for (var group in groupToAppointmentTypeId) {
+    var appointmentTypeId = groupToAppointmentTypeId[group].appointmentTypeId;
+    
+    var url = `https://acuityscheduling.com/api/v1/availability/classes?appointmentTypeID=${appointmentTypeId}&month=${monthString}`;
+    var authString = Utilities.base64Encode(`${acuityUserId}:${apiKey}`);
+    var options = {
+      'headers': {'Authorization': 'Basic ' + authString},
+      'method': 'get',
+      'muteHttpExceptions': true
+    };
+
+    try {
+      var response = UrlFetchApp.fetch(url, options);
+      if (response.getResponseCode() === 200) {
+        var classes = JSON.parse(response.getContentText());
+        
+        for (var c = 0; c < classes.length; c++) {
+          var classItem = classes[c];
+          classItem.groupName = group;
+          classItem.facilitator = groupToAppointmentTypeId[group].facilitator;
+          allClassesData.push(classItem);
+        }
+        
+        Logger.log(`Fetched ${classes.length} classes for group: ${group}`);
+      } else {
+        Logger.log(`Failed to fetch classes for group ${group}. Response Code: ${response.getResponseCode()}`);
+      }
+    } catch (e) {
+      Logger.log(`Error fetching classes for group ${group}: ${e}`);
+    }
+    
+    Utilities.sleep(300); // Be nice to the API
+  }
+
+  return allClassesData;
+}
+
+// === CALENDAR LAYOUT BUILDER ===
+function buildCalendarLayout(sheet, classesData, monthString, daysInMonth, monthName, year) {
+  // Clear the sheet
+  sheet.clear();
+  
+  // Title
+  sheet.getRange(1, 1).setValue(`${monthName} ${year} - Group Classes Calendar`);
+  sheet.getRange(1, 1).setFontSize(16).setFontWeight('bold');
+  sheet.getRange(1, 1, 1, 7).merge();
+  
+  // Subtitle with generation timestamp
+  var timestamp = Utilities.formatDate(new Date(), "America/New_York", "MMMM dd, yyyy 'at' h:mm a");
+  sheet.getRange(2, 1).setValue(`Generated on ${timestamp}`);
+  sheet.getRange(2, 1).setFontSize(10).setFontStyle('italic');
+  sheet.getRange(2, 1, 1, 7).merge();
+  
+  // Day headers
+  var dayHeaders = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  sheet.getRange(4, 1, 1, 7).setValues([dayHeaders]);
+  sheet.getRange(4, 1, 1, 7).setFontWeight('bold').setBackground('#e6f3ff');
+  
+  // Organize classes by date
+  var classesByDate = organizeClassesByDate(classesData);
+  
+  // Calculate calendar layout
+  var firstDay = new Date(year, parseInt(monthString.split('-')[1]) - 1, 1);
+  var startingDayOfWeek = firstDay.getDay(); // 0 = Sunday, 1 = Monday, etc.
+  
+  var currentRow = 5;
+  var currentCol = startingDayOfWeek + 1; // +1 because sheets are 1-indexed
+  
+  // Set up column widths
+  for (var col = 1; col <= 7; col++) {
+    sheet.setColumnWidth(col, 150);
+  }
+  
+  // Fill in the calendar
+  for (var day = 1; day <= daysInMonth; day++) {
+    var dateKey = `${year}-${monthString.split('-')[1]}-${day.toString().padStart(2, '0')}`;
+    var dayClasses = classesByDate[dateKey] || [];
+    
+    // Build the cell content
+    var cellData = buildDayCellContent(day, dayClasses);
+    
+    // Set the cell value
+    var cellRange = sheet.getRange(currentRow, currentCol);
+    cellRange.setValue(cellData.content);
+    
+    // Format the cell with colors
+    formatDayCell(cellRange, dayClasses.length > 0, cellData.classes);
+    
+    // Move to next position
+    currentCol++;
+    if (currentCol > 7) {
+      currentCol = 1;
+      currentRow++;
+    }
+  }
+  
+  // Auto-resize rows to fit content
+  sheet.autoResizeRows(5, currentRow - 4);
+}
+
+function organizeClassesByDate(classesData) {
+  var classesByDate = {};
+  
+  for (var i = 0; i < classesData.length; i++) {
+    var classItem = classesData[i];
+    var datetime = new Date(classItem.time);
+    var dateKey = Utilities.formatDate(datetime, "America/New_York", "yyyy-MM-dd");
+    
+    if (!classesByDate[dateKey]) {
+      classesByDate[dateKey] = [];
+    }
+    
+    classesByDate[dateKey].push({
+      name: classItem.name || classItem.groupName,
+      time: Utilities.formatDate(datetime, "America/New_York", "h:mm a"),
+      available: classItem.slotsAvailable || 0,
+      total: classItem.slots || 0,
+      groupName: classItem.groupName,
+      facilitator: classItem.facilitator || 'TBD'
+    });
+  }
+  
+  // Sort classes within each day by time
+  for (var date in classesByDate) {
+    classesByDate[date].sort(function(a, b) {
+      return a.time.localeCompare(b.time);
+    });
+  }
+  
+  return classesByDate;
+}
+
+function buildDayCellContent(day, dayClasses) {
+  var content = day.toString();
+  
+  if (dayClasses.length > 0) {
+    content += '\n';
+    for (var i = 0; i < dayClasses.length; i++) {
+      var classInfo = dayClasses[i];
+      content += '\n' + classInfo.name;
+      content += '\n' + classInfo.time;
+      content += '\n' + classInfo.facilitator;
+      content += '\n(' + classInfo.available + '/' + classInfo.total + ')';
+      
+      if (i < dayClasses.length - 1) {
+        content += '\n';
+      }
+    }
+  }
+  
+  return {
+    content: content,
+    classes: dayClasses
+  };
+}
+
+function formatDayCell(range, hasClasses, dayClasses) {
+  range.setVerticalAlignment('top');
+  range.setWrap(true);
+  range.setHorizontalAlignment('left');
+  
+  
+  // Start building rich text
+  var cellText = range.getValue().toString();
+  var richTextBuilder = SpreadsheetApp.newRichTextValue().setText(cellText);
+  
+  // Make the day number bold (first line)
+  var firstLineEnd = cellText.indexOf('\n');
+  if (firstLineEnd === -1) firstLineEnd = cellText.length;
+  richTextBuilder.setTextStyle(0, firstLineEnd, SpreadsheetApp.newTextStyle().setBold(true).build());
+  
+  // Apply colors to class names if there are classes
+  if (hasClasses && dayClasses) {
+    var currentPos = firstLineEnd + 1; // Start after day number and first newline
+    
+    for (var i = 0; i < dayClasses.length; i++) {
+      var classInfo = dayClasses[i];
+      
+      // Skip the empty line after day number
+      currentPos = cellText.indexOf('\n', currentPos) + 1;
+      
+      // Find the class name position
+      var classNameStart = currentPos;
+      var classNameEnd = classNameStart + classInfo.name.length;
+      
+      // Get color for this class
+      var classColor = getClassColor(classInfo.groupName);
+      
+      // Apply color to class name
+      richTextBuilder.setTextStyle(classNameStart, classNameEnd, 
+        SpreadsheetApp.newTextStyle()
+          .setForegroundColor(classColor)
+          .setBold(true)
+          .build());
+      
+      // Move past this class's content (class name + time + facilitator + slots + potential separator)
+      currentPos = classNameEnd;
+      currentPos = cellText.indexOf('\n', currentPos) + 1; // Skip time line
+      currentPos = cellText.indexOf('\n', currentPos) + 1; // Skip facilitator line
+      currentPos = cellText.indexOf('\n', currentPos) + 1; // Skip slots line
+      
+      // Skip separator line if not the last class
+      if (i < dayClasses.length - 1) {
+        currentPos = cellText.indexOf('\n', currentPos) + 1;
+      }
+    }
+  }
+  
+  range.setRichTextValue(richTextBuilder.build());
+}
+
+// === COLOR ASSIGNMENT FOR CLASSES ===
+function getClassColor(groupName) {
+  // Shorter dummy color map with adjacent-sounding group names
+  var colorMap = {
+    'Justice Circle': '#1f77b4',
+    'Fresh Start': '#ff7f0e',
+    'Wellness Check-In': '#2ca02c',
+    'Resilience Builders': '#d62728',
+    'Pathways Group': '#9467bd'
+  };
+  // Return the color for this group, or default black if not found
+  return colorMap[groupName] || '#000000';
+}
+
+// === UTILITY FUNCTIONS ===
+function testApiConnection() {
+  var scriptProperties = PropertiesService.getScriptProperties();
+  var apiKey = scriptProperties.getProperty('ACUITY_API_KEY');
+  var acuityUserId = scriptProperties.getProperty('ACUITY_USER_ID');
+  
+  if (!apiKey || !acuityUserId) {
+    var ui = SpreadsheetApp.getUi();
+    var result = ui.prompt('API Setup Required', 
+      'Please enter your Acuity User ID:', 
+      ui.ButtonSet.OK_CANCEL);
+    
+    if (result.getSelectedButton() == ui.Button.OK) {
+      var userId = result.getResponseText();
+      var apiResult = ui.prompt('API Setup Required', 
+        'Please enter your Acuity API Key:', 
+        ui.ButtonSet.OK_CANCEL);
+      
+      if (apiResult.getSelectedButton() == ui.Button.OK) {
+        var apiKeyInput = apiResult.getResponseText();
+        
+        // Save the credentials
+        scriptProperties.setProperties({
+          'ACUITY_API_KEY': apiKeyInput,
+          'ACUITY_USER_ID': userId
+        });
+        
+        ui.alert('Success!', 'API credentials saved successfully.', ui.ButtonSet.OK);
+      }
+    }
+    return;
+  }
+  
+  // Test the connection
+  try {
+    var url = 'https://acuityscheduling.com/api/v1/me';
+    var authString = Utilities.base64Encode(`${acuityUserId}:${apiKey}`);
+    var options = {
+      'headers': {'Authorization': 'Basic ' + authString},
+      'method': 'get',
+      'muteHttpExceptions': true
+    };
+    
+    var response = UrlFetchApp.fetch(url, options);
+    if (response.getResponseCode() === 200) {
+      var data = JSON.parse(response.getContentText());
+      SpreadsheetApp.getUi().alert('Success!', 
+        `API connection successful!\nConnected to: ${data.name || 'Your Acuity Account'}`, 
+        SpreadsheetApp.getUi().ButtonSet.OK);
+    } else {
+      SpreadsheetApp.getUi().alert('Error', 
+        `API connection failed. Response code: ${response.getResponseCode()}`, 
+        SpreadsheetApp.getUi().ButtonSet.OK);
+    }
+  } catch (e) {
+    SpreadsheetApp.getUi().alert('Error', 
+      `API connection failed: ${e.toString()}`, 
+      SpreadsheetApp.getUi().ButtonSet.OK);
+  }
+}-e \n\n---\n\n
+### FILE: ./scripts/compliance-reports/sheets-menu/ComplianceCustomMenu.gs
+// This is a custom menu that allows for running specific functions including a Tool Tips guide
+function onOpen(){
+  const ui = SpreadsheetApp.getUi();
+  ui.createMenu('🛠️ Compliance Tools')
+    .addItem('⬆️ Update Main Sheet Dates','updateMainSheetDates')
+    .addItem('⬇️ Pull Upcoming Dates','copyUpcomingCourtDates')
+    .addItem('📩 Generate Emails','sendComplianceReports')
+    .addItem('📝 Generate Reports','generateComplianceReports')
+    .addItem('📂 Jump to Reports','openThisWeekFolder')
+    .addSeparator()
+    .addItem('🧰 Tool Tips', 'showToolGuide')
+    .addToUi();
+} -e \n\n---\n\n
+### FILE: ./scripts/compliance-reports/sheets-menu/README.md
+# 🛠️ Compliance Tools for Google Sheets
+
+A comprehensive Google Apps Script solution for managing court dates and compliance reporting within Google Sheets.
+
+## 📋 Overview
+
+This tool suite provides an automated workflow for tracking court dates, generating compliance reports, and managing email communications. The system integrates directly into Google Sheets via a custom menu, making it easy for users to access all functionality without leaving their spreadsheet.
+
+## 🚀 Features
+
+### Custom Menu Integration
+- **Seamless Access**: All tools are available through a custom "🛠️ Compliance Tools" menu in Google Sheets
+- **Intuitive Interface**: Clear icons and descriptions for each function
+- **Built-in Help**: Integrated tool guide accessible from the menu
+
+### Core Functionality
+- **📅 Date Management**: Automated syncing and pulling of court dates
+- **📧 Email Generation**: Automated compliance report email creation and sending
+- **📊 Report Generation**: Formatted report creation with Google Drive integration
+- **🔗 Quick Navigation**: Direct access to report folders
+
+## 📖 Menu Options
+
+### ⬆️ Update Main Sheet Dates
+**Function**: `updateMainSheetDates()`
+- Synchronizes new court dates into the master tracking sheet
+- Ensures all date information is current and accurate
+- Prevents duplicate entries and maintains data integrity
+
+### ⬇️ Pull Upcoming Dates
+**Function**: `copyUpcomingCourtDates()`
+- Retrieves the latest upcoming court dates from the source data tab
+- Filters and organizes dates for easy review
+- Updates the working dataset with relevant upcoming events
+
+### 📩 Generate Emails
+**Function**: `sendComplianceReports()`
+- Creates and sends drafted compliance emails
+- Processes emails by part/section for organized distribution
+- Includes relevant court date information and compliance details
+
+### 📝 Generate Reports
+**Function**: `generateComplianceReports()`
+- Produces formatted compliance reports
+- Automatically saves reports to designated Google Drive folders
+- Includes comprehensive date tracking and status information
+
+### 📂 Jump to Reports
+**Function**: `openThisWeekFolder()`
+- Provides quick access to the current week's report folder
+- Streamlines file organization and retrieval
+- Maintains consistent folder structure
+
+### 🧰 Tool Tips
+**Function**: `showToolGuide()`
+- Displays an interactive help dialog
+- Provides quick reference for all available tools
+- Includes usage descriptions and functionality overview
+
+## 🔧 Installation
+
+1. **Open Google Sheets** and create or open your compliance tracking spreadsheet
+2. **Access Apps Script**:
+   - Go to `Extensions` → `Apps Script`
+3. **Add the Scripts**:
+   - Create a new file called `ComplianceCustomMenu.gs`
+   - Copy the custom menu code into this file
+   - Create another file called `ToolGuide.gs`
+   - Copy the tool guide code into this file
+4. **Save and Authorize**:
+   - Save both files
+   - Run the `onOpen()` function to authorize permissions
+5. **Refresh Your Sheet**:
+   - Close and reopen your Google Sheet
+   - The "🛠️ Compliance Tools" menu should now appear
+
+## 💡 Usage
+
+### First Time Setup
+1. Open your Google Sheet
+2. Look for the "🛠️ Compliance Tools" menu in the menu bar
+3. Click "🧰 Tool Tips" to familiarize yourself with available functions
+
+### Daily Workflow
+1. **Morning**: Use "⬇️ Pull Upcoming Dates" to get the latest court schedule
+2. **Data Entry**: Update any new information in your main sheet
+3. **Sync**: Run "⬆️ Update Main Sheet Dates" to keep everything current
+4. **Reporting**: Use "📝 Generate Reports" to create compliance documents
+5. **Communication**: Use "📩 Generate Emails" to send out required notifications
+
+### Quick Access
+- Use "📂 Jump to Reports" to quickly navigate to your report folders
+- Reference "🧰 Tool Tips" whenever you need a reminder of tool functions
+
+## 📁 File Structure
+
+```
+Google Apps Script Project/
+├── ComplianceCustomMenu.gs    # Main menu system
+├── ToolGuide.gs              # Interactive help system
+└── [Additional functions]     # Your other compliance functions
+```
+
+## 🔐 Permissions Required
+
+This script requires the following Google Apps Script permissions:
+- **Spreadsheet Access**: To read and write data
+- **Drive Access**: To create and manage report folders
+- **Gmail Access**: To send compliance emails
+- **HTML Service**: To display the tool guide dialog
+
+## 🛡️ Security Notes
+
+- All functions run within your Google account's security context
+- No external services are accessed without explicit permission
+- Data remains within your Google Workspace environment
+- Email sending requires your explicit authorization
+
+## 🐛 Troubleshooting
+
+### Menu Not Appearing
+- Refresh your Google Sheet
+- Check that the `onOpen()` function ran successfully
+- Verify script permissions are properly granted
+
+### Function Errors
+- Ensure all required sheets and data ranges exist
+- Check that column headers match expected formats
+- Verify Google Drive folder structure is set up correctly
+
+### Permission Issues
+- Re-run the authorization process
+- Check that your Google account has necessary permissions
+- Ensure Apps Script is enabled for your Google Workspace
+
+## 📞 Support
+
+For technical issues or feature requests:
+1. Check the "🧰 Tool Tips" guide first
+2. Review your sheet structure and data format
+3. Verify all required permissions are granted
+4. Test functions individually to isolate issues
+
+## 📋 Requirements
+
+- Google Sheets with appropriate data structure
+- Google Apps Script enabled
+- Necessary Google Workspace permissions
+- Properly configured Google Drive folder structure
+
+## 🔄 Updates
+
+To update the tools:
+1. Access your Apps Script project
+2. Update the relevant `.gs` files
+3. Save changes
+4. Refresh your Google Sheet to see updates
+
+---
+
+*This tool suite is designed to streamline compliance tracking and reporting workflows. For best results, ensure your data is properly structured and all required permissions are granted.*
+-e \n\n---\n\n
+### FILE: ./scripts/compliance-reports/sheets-menu/ToolGuide.gs
+function showToolGuide() {
+  const html = HtmlService.createHtmlOutput(`
+    <ul>
+      <li><strong>⬆️ Update Main Sheet Dates</strong>: Syncs new court dates into the master sheet.</li> <br>
+      <li><strong>⬇️ Pull Upcoming Dates</strong>: Grabs the latest upcoming court dates from the source tab.</li> <br>
+      <li><strong>📩 Generate Emails</strong>: Builds and sends drafted emails by part.</li> <br>
+      <li><strong>📝 Generate Reports</strong>: Generates formatted reports into Google Drive.</li> <br>
+    </ul>
+  `).setWidth(650).setHeight(190);
+  
+  SpreadsheetApp.getUi().showModalDialog(html, '🧰 Tool Guide');
+}-e \n\n---\n\n
+### FILE: ./scripts/compliance-reports/drafting-emails/SendEmailDrafts.gs
+function sendComplianceReports() {
+  try {
+    var userMap = {
+      'meredithk@innovatingjustice.org': 'kmeredith@nycourts.gov', // References the gmail you're signed in on to know which email to send the drafts to
+      'OTHER_STAFF_GMAIL.org': 'OTHER_STAFF_EMAIL@nycourts.gov',
+    };
+
+    var activeUser = Session.getActiveUser().getEmail();
+    var recipient = userMap[activeUser];
+    if (!recipient) {
+      Logger.log('No recipient mapped for user: ' + activeUser);
+      return;
+    }
+
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName('Upcoming Dates');
+    if (!sheet) {
+      Logger.log("Sheet 'Upcoming Dates' not found.");
+      return;
+    }
+
+    var data = sheet.getDataRange().getValues();
+    if (data.length < 2) {
+      Logger.log("No data found (or only header).");
+      return;
+    }
+
+    function parseDate(value) {
+      if (value instanceof Date) return value;
+      var parsed = new Date(value);
+      return isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    function isSameDay(d1, d2) {
+      return d1 && d2 && d1.getFullYear() === d2.getFullYear() &&
+            d1.getMonth() === d2.getMonth() &&
+            d1.getDate() === d2.getDate();
+    }
+
+    var today = new Date();
+    var nextWeekday = new Date(today);
+    nextWeekday.setDate(today.getDate() + 1);
+    while (nextWeekday.getDay() === 6 || nextWeekday.getDay() === 0) {
+      nextWeekday.setDate(nextWeekday.getDate() + 1);
+    }
+
+    var groups = {};
+    for (var i = 1; i < data.length; i++) {
+      var row = data[i];
+      var adjournDate = parseDate(row[6]);
+      if (!adjournDate || !isSameDay(adjournDate, nextWeekday)) continue;
+
+      var partRaw = row[7] ? row[7].toString() : "Unknown";
+      var normalizedPart = partRaw.replace(/-W$/, '');
+
+      if (!groups[normalizedPart]) groups[normalizedPart] = [];
+      groups[normalizedPart].push(row);
+    }
+
+    var subjectDate = Utilities.formatDate(nextWeekday, Session.getScriptTimeZone(), "MM/dd/yyyy");
+
+    for (var part in groups) {
+      var rows = groups[part];
+      var subject = "MJO Compliance " + subjectDate + ": Part " + part;
+
+      var emailBody = "Good morning,\n\nPlease find the attached compliance reports for the following cases:\n\n";
+      rows.forEach(function(r) {
+        emailBody += (r[2] || "Unknown Name") + " (" + (r[1] || "Unknown Docket") + ")\n";
+      });
+      emailBody += "\nBest,\n";
+
+      try {
+        if (!recipient || recipient.trim() === "") {
+          Logger.log("Error: No valid recipient for email.");
+          continue;
+        }
+
+        Logger.log("Sending email to: " + recipient + " | Subject: " + subject);
+        Logger.log("Email Body: \n" + emailBody);
+
+        GmailApp.sendEmail(recipient, subject, emailBody);
+        Logger.log("✅ Email sent successfully to " + recipient);
+
+      } catch (e) {
+        Logger.log("❌ Failed to send email to " + recipient + " for Part " + part + ": " + e.message);
+      }
+    }
+
+    Logger.log("📩 Emails processed for parts: " + Object.keys(groups).join(", "));
+
+  } catch (error) {
+    Logger.log("🚨 Unexpected error: " + error.message);
+  }
+}-e \n\n---\n\n
+### FILE: ./scripts/compliance-reports/drafting-emails/README.md
+# MJO Compliance Reports Email Automation
+
+A Google Apps Script tool that automatically sends compliance reports for upcoming court dates to designated recipients based on court parts.
+
+## Overview
+
+This script monitors a Google Sheets spreadsheet for upcoming court dates and automatically sends email notifications to appropriate court staff members. It groups cases by court part and sends consolidated emails for each part's compliance reports.
+
+## Features
+
+- **Automated Email Sending**: Sends compliance reports via Gmail
+- **Date-Based Filtering**: Only processes cases with adjourn dates matching the next weekday
+- **Part-Based Grouping**: Groups cases by court part and sends separate emails for each part
+- **User Mapping**: Maps Gmail users to their corresponding court email addresses
+- **Error Handling**: Comprehensive logging and error handling throughout the process
+- **Weekend Skip Logic**: Automatically skips weekends when calculating next weekday
+
+## Prerequisites
+
+- Google Apps Script access
+- Google Sheets with compliance data
+- Gmail account with appropriate permissions
+- Access to Google Workspace environment
+
+## Setup
+
+### 1. Spreadsheet Structure
+
+Your Google Sheets spreadsheet must contain a sheet named **"Upcoming Dates"** with the following column structure:
+
+| Column | Index | Description |
+|--------|-------|-------------|
+| A | 0 | (Not used in current version) |
+| B | 1 | **Docket Number** |
+| C | 2 | **Case Name** |
+| D | 3 | (Not used in current version) |
+| E | 4 | (Not used in current version) |
+| F | 5 | (Not used in current version) |
+| G | 6 | **Adjourn Date** |
+| H | 7 | **Part** |
+
+### 2. User Configuration
+
+Update the `userMap` object in the script with your Gmail-to-court-email mappings:
+
+```javascript
+var userMap = {
+  'your.gmail@innovatingjustice.org': 'your.email@nycourts.gov',
+  'another.staff@innovatingjustice.org': 'another.staff@nycourts.gov',
+  // Add more mappings as needed
+};
+```
+
+### 3. Script Installation
+
+1. Open Google Apps Script (script.google.com)
+2. Create a new project
+3. Replace the default code with the provided `sendComplianceReports()` function
+4. Save the project with an appropriate name
+
+### 4. Permissions
+
+The script requires the following permissions:
+- **Gmail**: To send emails
+- **Google Sheets**: To read spreadsheet data
+- **Google Drive**: To access the spreadsheet file
+
+## Usage
+
+### Manual Execution
+
+1. Open your Google Apps Script project
+2. Select the `sendComplianceReports` function
+3. Click the "Run" button
+4. Review the execution log for results
+
+### Automated Execution (Recommended)
+
+Set up a time-driven trigger to run the script automatically:
+
+1. In Google Apps Script, go to **Triggers** (clock icon)
+2. Click **"+ Add Trigger"**
+3. Configure:
+   - **Function**: `sendComplianceReports`
+   - **Event Source**: Time-driven
+   - **Type**: Day timer
+   - **Time**: Choose appropriate time (e.g., 8:00 AM)
+4. Save the trigger
+
+## How It Works
+
+1. **User Authentication**: Identifies the active Gmail user and maps to appropriate recipient
+2. **Data Retrieval**: Reads the "Upcoming Dates" sheet from the active spreadsheet
+3. **Date Filtering**: Filters cases where the adjourn date matches the next weekday
+4. **Part Grouping**: Groups filtered cases by court part (removes "-W" suffix if present)
+5. **Email Generation**: Creates separate emails for each part with case details
+6. **Email Delivery**: Sends emails via Gmail with formatted subject lines and body content
+
+## Email Format
+
+### Subject Line
+```
+MJO Compliance [DATE]: Part [PART_NUMBER]
+```
+
+### Email Body
+```
+Good morning,
+
+Please find the attached compliance reports for the following cases:
+
+[CASE_NAME] ([DOCKET_NUMBER])
+[CASE_NAME] ([DOCKET_NUMBER])
+...
+
+Best,
+```
+
+## Logging and Debugging
+
+The script includes comprehensive logging accessible through Google Apps Script's execution log:
+
+- ✅ Success messages for sent emails
+- ❌ Error messages for failed operations
+- 📩 Summary of processed parts
+- 🚨 Unexpected error notifications
+
+## Error Handling
+
+The script handles various error scenarios:
+
+- Missing or invalid recipient mappings
+- Missing "Upcoming Dates" sheet
+- Empty or invalid data
+- Email sending failures
+- Date parsing errors
+
+## Customization Options
+
+### Modifying Email Content
+
+Update the email body template in the script:
+
+```javascript
+var emailBody = "Good morning,\n\nPlease find the attached compliance reports for the following cases:\n\n";
+// Customize greeting, signature, or additional content
+```
+
+### Changing Date Logic
+
+Modify the date calculation logic if needed:
+
+```javascript
+var nextWeekday = new Date(today);
+nextWeekday.setDate(today.getDate() + 1); // Change +1 to different offset
+```
+
+### Adding Additional Data Fields
+
+Include more case information in emails by referencing additional columns:
+
+```javascript
+emailBody += (r[2] || "Unknown Name") + " (" + (r[1] || "Unknown Docket") + ") - " + (r[8] || "Additional Info") + "\n";
+```
+
+## Security Considerations
+
+- Keep user mappings updated and secure
+- Regularly review script permissions
+- Monitor execution logs for unusual activity
+- Test thoroughly before deploying to production
+
+## Support
+
+For issues or questions:
+1. Check the Google Apps Script execution log
+2. Verify spreadsheet structure and data
+3. Confirm user mappings are correct
+4. Test with a single case first
+
+## Version History
+
+- **v1.0**: Initial release with basic email automation functionality
+-e \n\n---\n\n
+### FILE: ./scripts/compliance-reports/tracking-dates/PushUpdatedDates.gs
+
+function updateMainSheetDates() {
+  var mainSheetId = 'destination_google_sheets_ID';
+  var upcomingDatesSheetId = 'source_google_sheets_ID';
+
+  var upcomingDatesTab3Name = 'Updated Dates';
+
+  var docketNumberColumnIndex = 1; // Column B (0-based)
+  var dateColumnIndex = 6; // Column G - Adjournment Date (0-based)
+  var courtPartColumnIndex = 7; // Column H - Court Part (0-based)
+  var lastCourtDateMainIndex = 10; // Column K - Last Court Date in main sheet (0-based)
+  var lastCourtDateUpdatedIndex = 15; // Column P - Last Court Date in Updated Dates (0-based)
+
+  var mainSpreadsheet = SpreadsheetApp.openById(mainSheetId);
+  var upcomingDatesSpreadsheet = SpreadsheetApp.openById(upcomingDatesSheetId);
+
+  var upcomingDatesTab3 = upcomingDatesSpreadsheet.getSheetByName(upcomingDatesTab3Name);
+  var tab3Data = upcomingDatesTab3.getDataRange().getValues();
+
+  var mainSheetTabs = mainSpreadsheet.getSheets();
+
+  // Ignore the first tab in the main sheet
+  for (var j = 1; j < mainSheetTabs.length; j++) {
+    var mainSheetTab = mainSheetTabs[j];
+    var mainSheetTabData = mainSheetTab.getDataRange().getValues();
+
+    for (var i = 1; i < tab3Data.length; i++) {
+      var row = tab3Data[i];
+      var docketNumber = row[docketNumberColumnIndex];
+      var newRowDate = row[dateColumnIndex];
+      var newRowCourtPart = row[courtPartColumnIndex];
+
+      for (var k = 1; k < mainSheetTabData.length; k++) {
+        if (mainSheetTabData[k][docketNumberColumnIndex] === docketNumber) {
+          // Get the current adjournment date before updating
+          var currentAdjDate = mainSheetTabData[k][dateColumnIndex];
+          
+          // Update the adjournment date with the new value
+          mainSheetTab.getRange(k + 1, dateColumnIndex + 1).setValue(newRowDate);
+          mainSheetTab.getRange(k + 1, courtPartColumnIndex + 1).setValue(newRowCourtPart);
+          
+          // Update Last Court Date column with the old adjournment date
+          // Only update if there was a valid current adjournment date
+          if (currentAdjDate && currentAdjDate !== '') {
+            mainSheetTab.getRange(k + 1, lastCourtDateMainIndex + 1).setValue(currentAdjDate);
+          }
+          
+          break;
+        }
+      }
+    }
+  }
+}-e \n\n---\n\n
+### FILE: ./scripts/compliance-reports/tracking-dates/README.md
+# Court Dates Management System
+
+A Google Apps Script-based system for managing court dates across multiple spreadsheets, designed to track upcoming court dates and synchronize updates back to the main case management system.
+
+## System Overview
+
+This system consists of two main components that work together to manage court date information:
+
+1. **PullUpcomingDates.gs** - Extracts upcoming court dates from main case sheets
+2. **PushUpdatedDates.gs** - Updates main sheets with revised court dates
+
+## Architecture
+
+```
+┌─────────────────┐    Pull Upcoming    ┌──────────────────┐
+│   Main Sheet    │ ──────────────────► │ Upcoming Dates   │
+│   (Source)      │                     │   Spreadsheet    │
+│                 │                     │                  │
+│ Multiple Tabs   │                     │ ┌──────────────┐ │
+│ Case Data       │                     │ │Upcoming Dates│ │
+│                 │                     │ │   (Tab 1)    │ │
+│                 │    Push Updates     │ └──────────────┘ │
+│                 │ ◄────────────────── │ ┌──────────────┐ │
+└─────────────────┘                     │ │Updated Dates │ │
+                                        │ │   (Tab 2)    │ │
+                                        │ └──────────────┘ │
+                                        └──────────────────┘
+```
+
+## Component Details
+
+### 1. PullUpcomingDates.gs
+
+**Purpose**: Extracts court dates from the main spreadsheet that fall within the next 10 weeks.
+
+**Key Features**:
+- Scans all sheets in the main spreadsheet except excluded ones
+- Filters dates to show only upcoming dates (next 10 weeks)
+- Prevents duplicate entries by checking existing docket numbers
+- Highlights new entries in yellow for easy identification
+- Automatically sorts data by date
+- Handles "Last Court Date" tracking
+
+**Configuration**:
+```javascript
+const MAIN_SHEET_ID = 'SOURCE_SHEET_ID';           // Main case management sheet
+const UPCOMING_DATES_SHEET_ID = 'DESTINATION_SHEET_ID';  // Upcoming dates sheet
+const UPCOMING_WEEKS = 10;                          // Look-ahead period
+const HIGHLIGHT_COLOR = '#FFFF00';                  // Yellow highlight for new entries
+```
+
+**Excluded Sheets**:
+- Alchemer Master Sheet - No edits allowed
+- RC Calendar
+- Salesforce_Engagements
+- MCJC Data
+- MCJC Referrals
+- RESET
+
+**Data Structure**:
+- Uses column indexes to identify key fields:
+  - Column B (1): Docket Number
+  - Column G (6): Adjournment Date
+  - Column A (0): Mandate Date
+  - Column K (10): Last Court Date (source)
+  - Column P (15): Last Court Date (destination)
+
+### 2. PushUpdatedDates.gs
+
+**Purpose**: Updates the main spreadsheet with revised court dates from the "Updated Dates" tab.
+
+**Key Features**:
+- Reads from "Updated Dates" tab in the upcoming dates spreadsheet
+- Matches records by docket number
+- Updates adjournment dates and court parts
+- Preserves court date history by moving current date to "Last Court Date"
+- Processes all tabs in main sheet (except first tab)
+
+**Configuration**:
+```javascript
+var mainSheetId = 'destination_google_sheets_ID';    // Main case management sheet
+var upcomingDatesSheetId = 'source_google_sheets_ID'; // Upcoming dates sheet
+var upcomingDatesTab3Name = 'Updated Dates';          // Source tab for updates
+```
+
+**Update Process**:
+1. Current adjournment date is saved as "Last Court Date"
+2. New adjournment date replaces current date
+3. Court part information is updated
+4. Changes are applied across all relevant sheets
+
+## Workflow
+
+### Step 1: Extract Upcoming Dates
+```javascript
+copyUpcomingDates();
+```
+- Scans main spreadsheet for dates in next 10 weeks
+- Creates/updates "Upcoming Dates" tab
+- Highlights new entries in yellow
+- Sorts by date ascending
+
+### Step 2: Manual Review & Updates
+- Review upcoming dates in the "Upcoming Dates" tab
+- Make any necessary changes to dates/court parts
+- Move updated records to "Updated Dates" tab
+
+### Step 3: Push Updates Back
+```javascript
+updateMainSheetDates();
+```
+- Reads from "Updated Dates" tab
+- Matches by docket number
+- Updates main spreadsheet with new information
+- Preserves date history
+
+## Column Mapping
+
+| Column | Letter | Purpose | Pull Script | Push Script |
+|--------|--------|---------|-------------|-------------|
+| 0 | A | Mandate Date | ✓ | |
+| 1 | B | Docket Number | ✓ | ✓ |
+| 6 | G | Adjournment Date | ✓ | ✓ |
+| 7 | H | Court Part | | ✓ |
+| 10 | K | Last Court Date (Main) | ✓ | ✓ |
+| 15 | P | Last Court Date (Upcoming) | ✓ | ✓ |
+
+## Setup Instructions
+
+### Prerequisites
+- Google Apps Script access
+- Two Google Sheets:
+  - Main case management spreadsheet
+  - Upcoming dates tracking spreadsheet
+
+### Installation
+
+1. **Configure Sheet IDs**:
+   ```javascript
+   // In PullUpcomingDates.gs
+   const MAIN_SHEET_ID = 'your_main_sheet_id';
+   const UPCOMING_DATES_SHEET_ID = 'your_upcoming_dates_sheet_id';
+   
+   // In PushUpdatedDates.gs
+   var mainSheetId = 'your_main_sheet_id';
+   var upcomingDatesSheetId = 'your_upcoming_dates_sheet_id';
+   ```
+
+2. **Set up triggers** (optional):
+   - Create time-driven triggers for automatic execution
+   - Recommended: Daily execution of `copyUpcomingDates()`
+
+3. **Create required tabs**:
+   - "Upcoming Dates" tab will be created automatically
+   - Manually create "Updated Dates" tab for the push process
+
+### Usage
+
+1. **Regular Monitoring**:
+   ```javascript
+   copyUpcomingDates();
+   ```
+   Run daily or as needed to capture new upcoming dates.
+
+2. **Process Updates**:
+   - Review highlighted entries in "Upcoming Dates"
+   - Move changed records to "Updated Dates" tab
+   - Run: `updateMainSheetDates();`
+
+## Error Handling
+
+Both scripts include comprehensive error handling:
+- Invalid date detection and logging
+- Spreadsheet access error handling
+- Data validation checks
+- Detailed logging for troubleshooting
+
+## Logging
+
+The system provides detailed logging for:
+- Number of new records added
+- Date validation errors
+- Processing status updates
+- Error stack traces
+
+## Best Practices
+
+1. **Regular Backups**: Backup main spreadsheet before major updates
+2. **Test Environment**: Test scripts on copies before production use
+3. **Monitor Logs**: Regular review of execution logs
+4. **Data Validation**: Verify date formats and docket numbers
+5. **Manual Review**: Always review highlighted entries before processing
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Invalid Date Errors**: Check date format consistency
+2. **Duplicate Entries**: Verify docket number uniqueness
+3. **Missing Data**: Ensure all required columns exist
+4. **Permission Errors**: Verify script has access to both spreadsheets
+
+### Debug Tips
+
+- Check Google Apps Script execution logs
+- Verify sheet names match configuration
+- Ensure column indexes align with actual data structure
+- Test with small data sets first
+
+## Maintenance
+
+- **Monthly**: Review excluded sheets list
+- **Quarterly**: Validate column mappings
+- **As needed**: Adjust `UPCOMING_WEEKS` parameter
+- **Regular**: Monitor script execution quotas and performance
+-e \n\n---\n\n
+### FILE: ./scripts/compliance-reports/tracking-dates/PullUpcomingDates.gs
+function copyUpcomingCourtDates() {
+  // Constants
+  const MAIN_SHEET_ID = 'SOURCE_SHEET_ID';
+  const UPCOMING_DATES_SHEET_ID = 'DESTINATION_SHEET_ID';
+  
+  // List of sheet names to exclude
+  const EXCLUDED_SHEET_NAMES = [
+    'Alchemer Master Sheet - No edits allowed',
+    'RC Calendar',
+    'Salesforce_Engagements',
+    'MCJC Data',
+    'MCJC Referrals',
+    'RESET'
+  ];
+  
+  const UPCOMING_DATES_SHEET_NAME = 'Upcoming Dates';
+  const DATE_COLUMN_INDEX = 6; // Index of the 'adj date' column (0-based)
+  const DOCKET_NUMBER_INDEX = 1; // Index of the docket number column (0-based)
+  const MANDATE_DATE_INDEX = 0; // Index of the mandate date column (0-based)
+  const LAST_COURT_DATE_INDEX = 10; // Column K in main sheet (0-based)
+  const LAST_COURT_DATE_UPCOMING_INDEX = 15; // Column P in upcoming dates sheet (0-based)
+  const UPCOMING_WEEKS = 10;
+  const TOTAL_COLUMNS = 10; // Original columns from main sheet
+  const TOTAL_COLUMNS_WITH_LAST_COURT = 16; // Total columns including Last Court Date in upcoming sheet
+  const HEADER_ROWS = 1;
+  
+  // Highlight color for new rows
+  const HIGHLIGHT_COLOR = '#FFFF00'; // Yellow highlight
+  
+  function normalizeDate(date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  }
+  
+  function isValidDate(date) {
+    return date instanceof Date && !isNaN(date);
+  }
+  
+  try {
+    // Get Spreadsheets and Sheets
+    const mainSpreadsheet = SpreadsheetApp.openById(MAIN_SHEET_ID);
+    const mainSheets = mainSpreadsheet.getSheets();
+    const upcomingDatesSpreadsheet = SpreadsheetApp.openById(UPCOMING_DATES_SHEET_ID);
+    const upcomingDatesSheet = 
+      upcomingDatesSpreadsheet.getSheetByName(UPCOMING_DATES_SHEET_NAME) ||
+      upcomingDatesSpreadsheet.insertSheet(UPCOMING_DATES_SHEET_NAME);
+    
+    // Calculate date ranges
+    const currentDate = normalizeDate(new Date());
+    currentDate.setDate(currentDate.getDate()); // Skip today's date
+    const endDate = normalizeDate(new Date());
+    endDate.setDate(endDate.getDate() + UPCOMING_WEEKS * 7);
+    
+    // Get existing upcoming dates data and sort it
+    let upcomingDatesData = [];
+    let existingDocketNumbers = new Set();
+    
+    if (upcomingDatesSheet.getLastRow() > HEADER_ROWS) {
+      const existingDataRange = upcomingDatesSheet.getRange(
+        HEADER_ROWS + 1,
+        1,
+        upcomingDatesSheet.getLastRow() - HEADER_ROWS,
+        TOTAL_COLUMNS_WITH_LAST_COURT
+      );
+      upcomingDatesData = existingDataRange.getValues();
+      upcomingDatesData.forEach(row => existingDocketNumbers.add(row[DOCKET_NUMBER_INDEX]));
+      
+      // Clear any existing highlighting from previous runs
+      existingDataRange.setBackground(null);
+      
+      existingDataRange.sort({
+        column: DATE_COLUMN_INDEX + 1,
+        ascending: true
+      });
+    }
+    
+    let newUpcomingDates = [];
+    
+    // Loop through all sheets except those in EXCLUDED_SHEET_NAMES
+    mainSheets.forEach(function(sheet) {
+      if (!EXCLUDED_SHEET_NAMES.includes(sheet.getName())) {
+        // Get data including the Last Court Date column (if it exists)
+        const lastRow = sheet.getLastRow();
+        const lastCol = sheet.getLastColumn();
+        
+        if (lastRow > HEADER_ROWS) {
+          const sheetData = sheet
+            .getRange(HEADER_ROWS + 1, 1, lastRow - HEADER_ROWS, Math.max(lastCol, LAST_COURT_DATE_INDEX + 1))
+            .getValues();
+          
+          // Filter rows based on date and duplicate check
+          const sheetUpcomingDates = sheetData.filter(function(row) {
+            const dateCell = row[DATE_COLUMN_INDEX];
+            if (!dateCell) {
+              return false;
+            }
+            const date = normalizeDate(new Date(dateCell));
+            
+            if (!isValidDate(date)) {
+              Logger.log('Invalid Date: ' + dateCell);
+              return false;
+            }
+            
+            const docketNumber = row[DOCKET_NUMBER_INDEX];
+            return date >= currentDate && date <= endDate && !existingDocketNumbers.has(docketNumber);
+          }).map(function(row) {
+            // Create new row with Last Court Date
+            const newRow = row.slice(0, TOTAL_COLUMNS).concat(Array(TOTAL_COLUMNS_WITH_LAST_COURT - TOTAL_COLUMNS).fill(''));
+            
+            // Set Last Court Date
+            // If there's already a Last Court Date in column K, use it
+            // Otherwise, use the Mandate Date (referral date) from column A
+            if (row[LAST_COURT_DATE_INDEX] && row[LAST_COURT_DATE_INDEX] !== '') {
+              newRow[LAST_COURT_DATE_UPCOMING_INDEX] = row[LAST_COURT_DATE_INDEX];
+            } else {
+              newRow[LAST_COURT_DATE_UPCOMING_INDEX] = row[MANDATE_DATE_INDEX];
+            }
+            
+            return newRow;
+          });
+          
+          newUpcomingDates = newUpcomingDates.concat(sheetUpcomingDates);
+        }
+      }
+    });
+    
+    if (newUpcomingDates.length > 0) {
+      // Write new data to the sheet
+      const newRowsRange = upcomingDatesSheet
+        .getRange(upcomingDatesSheet.getLastRow() + 1, 1, newUpcomingDates.length, TOTAL_COLUMNS_WITH_LAST_COURT)
+        .setValues(newUpcomingDates);
+      
+      // Highlight the new rows
+      newRowsRange.setBackground(HIGHLIGHT_COLOR);
+      
+      // Sort all the data
+      upcomingDatesSheet
+        .getRange(HEADER_ROWS + 1, 1, upcomingDatesSheet.getLastRow() - HEADER_ROWS, TOTAL_COLUMNS_WITH_LAST_COURT)
+        .sort({
+          column: DATE_COLUMN_INDEX + 1,
+          ascending: true
+        });
+    }
+    
+    Logger.log('Upcoming dates successfully updated. ' + newUpcomingDates.length + ' new records added and highlighted.');
+  } catch (e) {
+    Logger.log('Error: ' + e);
+    Logger.log(e.stack);
+  }
+}
+-e \n\n---\n\n
+### FILE: ./scripts/compliance-reports/report-generation/README.md
+# Compliance Report Generator
+
+A Google Apps Script that automates the generation of compliance reports from spreadsheet data, organizing them into a structured folder hierarchy in Google Drive.
+
+## Overview
+
+This script processes rows from a Google Sheets spreadsheet containing court case information and generates compliance reports using predefined Google Docs templates. Reports are automatically organized into a nested folder structure based on dates and court parts.
+
+## Features
+
+- **Batch Processing**: Processes reports in configurable batches to avoid execution time limits
+- **Progress Tracking**: Saves progress between runs and allows manual starting point selection
+- **Template-Based Generation**: Uses Google Docs templates with placeholder replacement
+- **Smart Organization**: Creates a nested folder structure (Year → Month → Week → Day → Part)
+- **Duplicate Prevention**: Skips files that already exist
+- **Legacy Migration**: Automatically reorganizes old folder structures to the new format
+
+## Prerequisites
+
+1. Google Sheets spreadsheet named "Upcoming Dates" with the following columns:
+   - Column A: Mandate Date
+   - Column B: Docket #
+   - Column C: Participant Name
+   - Column D: Charge
+   - Column E: Dispo
+   - Column F: Mandate
+   - Column G: Adjourn Date
+   - Column H: Part
+   - Column I: Notes
+   - Column J: RC
+   - Column P: Last Court Date
+
+2. Google Docs templates with placeholders:
+   - `{{Mandate Date}}`
+   - `{{Docket #}}`
+   - `{{Participant Name}}`
+   - `{{Charge}}`
+   - `{{Dispo}}`
+   - `{{Mandate}}`
+   - `{{Adjourn. Date}}`
+   - `{{Part}}`
+   - `{{Notes}}`
+   - `{{RC}}`
+   - `{{LastCourtDate}}`
+
+3. A Google Drive folder to store generated reports
+
+## Setup
+
+1. **Create Templates**: 
+   - Create Google Docs templates for each RC (Resource Coordinator)
+   - Add placeholders using the format `{{Placeholder Name}}`
+   - Note the document IDs
+
+2. **Update Configuration**:
+   ```javascript
+   // Update template IDs in rcTemplateMap
+   var rcTemplateMap = {
+     "Kai": "YOUR_TEMPLATE_ID_HERE",
+     // Add more RC mappings as needed
+   };
+   
+   // Update main folder ID
+   var mainFolderId = "YOUR_FOLDER_ID_HERE";
+   ```
+
+3. **Adjust Batch Size** (optional):
+   ```javascript
+   var BATCH_SIZE = 15; // Adjust based on your needs
+   ```
+
+## Usage
+
+### Running the Script
+
+1. Open your Google Sheets file
+2. Go to Extensions → Apps Script
+3. Run the `generateComplianceReports()` function
+4. When prompted, enter a starting row number or press Cancel to use the saved position
+
+### Functions
+
+- **`generateComplianceReports()`**: Main function that processes reports
+- **`resetProcessing()`**: Clears saved progress and resets to row 1
+
+### Folder Structure
+
+Reports are organized as follows:
+```
+Main Folder/
+├── 2025/
+│   ├── January/
+│   │   ├── Week of 1/6/
+│   │   │   ├── Monday 1/6/
+│   │   │   │   ├── ASC/
+│   │   │   │   │   └── LastName_F_ASC_Compliance Report
+│   │   │   │   └── TAP/
+│   │   │   │       └── LastName_F_TAP_Compliance Report
+```
+
+### File Naming Convention
+
+Files are named using the pattern: `LastName_FirstInitial_Part_Compliance Report`
+
+Example: `Smith_J_ASC_Compliance Report`
+
+## Script Properties
+
+The script uses Google Apps Script Properties Service to track progress:
+- `currentRowIndex`: Stores the next row to process
+
+## Execution Time Management
+
+- The script monitors execution time and pauses before the 6-minute limit
+- Progress is automatically saved when pausing
+- Subsequent runs continue from where the previous run stopped
+
+## Legacy Folder Migration
+
+The script automatically handles two types of legacy structures:
+
+1. **Flat date folders** (e.g., "4-10-2025")
+2. **Previous nested structure** without Part-level folders
+
+Files are moved to the new structure while preserving all data.
+
+## Troubleshooting
+
+### Common Issues
+
+1. **"Sheet not found" error**: Ensure your sheet is named exactly "Upcoming Dates"
+2. **Template errors**: Verify template IDs are correct and accessible
+3. **Folder access issues**: Check that the script has permission to access the main folder
+4. **Duplicate files**: The script skips existing files to prevent overwrites
+
+### Logging
+
+Check the Apps Script editor's Execution Log for detailed information about:
+- Processing progress
+- Skipped duplicates
+- Error messages
+- File movements during reorganization
+
+## Performance Tips
+
+1. **Batch Size**: Larger batches process more efficiently but risk timeout
+2. **Starting Row**: Use manual starting row selection to reprocess specific ranges
+3. **Regular Runs**: Schedule regular runs to process new data incrementally
+
+## Security Notes
+
+- Template IDs and folder IDs should be kept secure
+- The script requires edit access to both the spreadsheet and Drive folders
+- Consider restricting access to the Apps Script project
+
+## Maintenance
+
+- Regularly check execution logs for errors
+- Monitor the folder structure for any irregularities
+- Update template IDs when templates change
+- Add new RC mappings as needed
+-e \n\n---\n\n
+### FILE: ./scripts/compliance-reports/report-generation/GenerateComplianceDrafts.gs
+/****************************************************
+ * Main Function: Generates Compliance Reports in Batches
+ ****************************************************/
+function generateComplianceReports() {
+  var startTime = new Date().getTime();
+  var BATCH_SIZE = 15; // How many rows are we generating in one go?
+  
+  // Get script properties for progress tracking
+  var props = PropertiesService.getScriptProperties();
+  var savedRowIndex = parseInt(props.getProperty('currentRowIndex')) || 1;
+  
+  // Show dialog to get user input for starting row
+  var ui = SpreadsheetApp.getUi();
+  var response = ui.prompt(
+    'Set Starting Row',
+    'Current saved position: Row ' + savedRowIndex + '\n\nEnter the row number to start processing from (or press Cancel to use saved position):',
+    ui.ButtonSet.OK_CANCEL
+  );
+  
+  var currentRowIndex;
+  if (response.getSelectedButton() == ui.Button.OK) {
+    var userInput = response.getResponseText().trim();
+    if (userInput && !isNaN(userInput)) {
+      currentRowIndex = parseInt(userInput);
+      if (currentRowIndex < 1) {
+        ui.alert('Invalid Input', 'Row number must be 1 or greater. Using saved position: ' + savedRowIndex, ui.ButtonSet.OK);
+        currentRowIndex = savedRowIndex;
+      }
+    } else if (userInput === '') {
+      // User entered empty string, use saved position
+      currentRowIndex = savedRowIndex;
+    } else {
+      // Invalid input
+      ui.alert('Invalid Input', 'Please enter a valid number. Using saved position: ' + savedRowIndex, ui.ButtonSet.OK);
+      currentRowIndex = savedRowIndex;
+    }
+  } else {
+    // User cancelled or closed dialog, use saved position
+    currentRowIndex = savedRowIndex;
+  }
+
+  // 1) Grab your sheet and data
+  var sheetName = "Upcoming Dates";
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  if (!sheet) {
+    Logger.log("Error: Sheet '" + sheetName + "' not found.");
+    return;
+  }
+  var data = sheet.getDataRange().getValues(); // includes header row
+  
+  // Validate that the starting row is within bounds
+  if (currentRowIndex >= data.length) {
+    ui.alert('Invalid Row', 'Starting row ' + currentRowIndex + ' is beyond the data range. Total rows: ' + data.length, ui.ButtonSet.OK);
+    return;
+  }
+  
+  Logger.log("Starting processing from row " + currentRowIndex + " with batch size " + BATCH_SIZE);
+  
+  // 2) RC-to-template mapping (adjust with your actual template IDs)
+  var rcTemplateMap = {
+    "Kai": "3490314r41930j4f0xx", // these are IDs to google doc templates with respective RC signatures at the bottom
+  };
+
+  // 3) Main folder ID (where subfolders + docs will be saved)
+  var mainFolderId = "driverfolderIDs";
+  var mainFolder = DriveApp.getFolderById(mainFolderId);
+
+  // 3.1) Reorganize any old flat day folders into the new nested structure.
+  reorganizeOldFolders(mainFolder);
+
+  // Process rows in a batch
+  var processedCount = 0;
+  for (var i = currentRowIndex; i < data.length; i++) {
+    // If we've processed our batch size, exit for this run.
+    if (processedCount >= BATCH_SIZE) {
+      Logger.log("Batch limit reached. Pausing execution.");
+      break;
+    }
+    
+    try {
+      // Adjust column indices to match your spreadsheet
+      var mandateDateRaw   = data[i][0]; // A: Mandate Date
+      var docket           = data[i][1]; // B: Docket #
+      var participantName  = data[i][2]; // C: Participant Name
+      var charge           = data[i][3]; // D: Charge
+      var dispo            = data[i][4]; // E: Dispo
+      var mandate          = data[i][5]; // F: Mandate
+      var adjournDateRaw   = data[i][6]; // G: Adjourn Date
+      var part             = data[i][7]; // H: Part
+      var notes            = data[i][8]; // I: Notes
+      var rc               = data[i][9]; // J: RC
+      var lastcourtdateraw = data[i][15]; // P: Last Court Date
+
+      // 5) Determine the correct template; default to Kai if no match
+      var templateId = rcTemplateMap[rc] || rcTemplateMap["Kai"];
+
+      // 6) Format dates as "M/d/yyyy"
+      var timeZone = Session.getScriptTimeZone();
+      var mandateDate = Utilities.formatDate(new Date(mandateDateRaw), timeZone, "M/d/yyyy");
+      var adjournDate = Utilities.formatDate(new Date(adjournDateRaw), timeZone, "M/d/yyyy");
+      var lastcourtdate = Utilities.formatDate(new Date(lastcourtdateraw), timeZone, "M/d/yyyy");
+
+      // Create a Date object for adjourn date to build our nested folder structure.
+      var adjournDateObj = new Date(adjournDateRaw);
+      var yearStr = adjournDateObj.getFullYear().toString();
+      var monthNames = ["January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"];
+      var monthStr = monthNames[adjournDateObj.getMonth()];
+      var monday = getMonday(adjournDateObj);
+      var weekFolderName = "Week of " + (monday.getMonth()+1) + "/" + monday.getDate();
+      var dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      var dayFolderName = dayNames[adjournDateObj.getDay()] + " " + ((adjournDateObj.getMonth()+1) + "/" + adjournDateObj.getDate());
+      
+      // Create the nested folder structure including the Part folder
+      var yearFolder = getOrCreateFolder(mainFolder, yearStr);
+      var monthFolder = getOrCreateFolder(yearFolder, monthStr);
+      var weekFolder = getOrCreateFolder(monthFolder, weekFolderName);
+      var dayFolder = getOrCreateFolder(weekFolder, dayFolderName);
+      var partFolder = getOrCreateFolder(dayFolder, part); // New level for Part folders
+
+      // 10) Build your file naming convention (e.g., "LastName_F_Part_Compliance Report")
+      var nameParts = participantName.trim().split(/\s+/);
+      var firstName = nameParts.length > 0 ? nameParts[0] : "Unknown";
+      var lastName  = nameParts.length > 1 ? nameParts[nameParts.length - 1] : "Unknown";
+      var firstInitial = firstName.charAt(0);
+      var baseName = lastName + "_" + firstInitial + "_" + part + "_Compliance Report";
+
+      // Check for duplicates; skip if already exists in the part folder.
+      var existingFiles = partFolder.getFilesByName(baseName);
+      if (existingFiles.hasNext()) {
+        Logger.log("Skipping duplicate report for " + baseName + " (row " + i + ")");
+        processedCount++;
+        continue;
+      }
+
+      // 8) Copy the template into the part folder
+      var tempDocFile = DriveApp.getFileById(templateId).makeCopy("TempDoc", partFolder);
+      var tempDocId = tempDocFile.getId();
+      var doc = DocumentApp.openById(tempDocId);
+      var body = doc.getBody();
+
+      // 9) Replace placeholders in the document
+      body.replaceText("\\{\\{Mandate Date\\}\\}", mandateDate);
+      body.replaceText("\\{\\{Docket \\#\\}\\}", docket);
+      body.replaceText("\\{\\{Participant Name\\}\\}", participantName);
+      body.replaceText("\\{\\{Charge\\}\\}", charge);
+      body.replaceText("\\{\\{Dispo\\}\\}", dispo);
+      
+      var mandateText = (mandate == 1) ? "1 session" : mandate + " sessions";
+      body.replaceText("\\{\\{Mandate\\}\\}", mandateText);
+      
+      body.replaceText("\\{\\{Adjourn\\. Date\\}\\}", adjournDate);
+      body.replaceText("\\{\\{Part\\}\\}", part);
+      body.replaceText("\\{\\{Notes\\}\\}", notes);
+      body.replaceText("\\{\\{RC\\}\\}", rc);
+      body.replaceText("\\{\\{LastCourtDate\\}\\}", lastcourtdate);
+
+      // 11) Save changes and rename the document
+      doc.saveAndClose();
+      tempDocFile.setName(baseName); 
+      Logger.log("Successfully generated report: " + baseName + " (row " + i + ")");
+
+      processedCount++;
+    } catch (e) {
+      Logger.log("Error processing row " + i + ": " + e.toString());
+    }
+    
+    // Check elapsed time; if approaching limit, save progress and exit.
+    var elapsed = new Date().getTime() - startTime;
+    if (elapsed > 280000) {  // roughly 4.66 minutes
+      Logger.log("Approaching execution time limit; saving progress at row " + i);
+      props.setProperty('currentRowIndex', i + 1);
+      return;
+    }
+  }
+  
+  // Update progress: if not finished, store the new starting row; otherwise, clear it.
+  if (currentRowIndex + processedCount < data.length) {
+    props.setProperty('currentRowIndex', currentRowIndex + processedCount);
+    Logger.log("Batch completed. Next starting row: " + (currentRowIndex + processedCount));
+  } else {
+    props.deleteProperty('currentRowIndex');
+    Logger.log("All reports processed.");
+  }
+}
+
+/****************************************************
+ * Helper Function: Returns the folder with the given name inside the parent folder,
+ * or creates it if it does not exist.
+ ****************************************************/
+function getOrCreateFolder(parent, folderName) {
+  var folders = parent.getFoldersByName(folderName);
+  return folders.hasNext() ? folders.next() : parent.createFolder(folderName);
+}
+
+/****************************************************
+ * Helper Function: Given a date, returns the Monday of that week.
+ * If already Monday, returns the same date.
+ ****************************************************/
+function getMonday(d) {
+  var dCopy = new Date(d);
+  var day = dCopy.getDay();
+  var offset = (day === 0 ? -6 : 1 - day); // Sunday case: adjust backward 6 days
+  return new Date(dCopy.getFullYear(), dCopy.getMonth(), dCopy.getDate() + offset);
+}
+
+/****************************************************
+ * Reorganize old flat day folders (named like "4-10-2025") into the new nested structure.
+ * Also reorganize the previous structure (without Part folders) to the new structure.
+ ****************************************************/
+function reorganizeOldFolders(mainFolder) {
+  // First, handle the legacy flat folders
+  var oldFolderIterator = mainFolder.getFolders();
+  var oldFolderRegex = /^\d{1,2}-\d{1,2}-\d{4}$/;  // e.g., "4-10-2025"
+  
+  while (oldFolderIterator.hasNext()) {
+    var oldFolder = oldFolderIterator.next();
+    var folderName = oldFolder.getName();
+    if (oldFolderRegex.test(folderName)) {
+      // Parse the folder name into a Date object (month-day-year)
+      var parts = folderName.split("-");
+      var month = parseInt(parts[0], 10) - 1;
+      var day = parseInt(parts[1], 10);
+      var year = parseInt(parts[2], 10);
+      var oldDate = new Date(year, month, day);
+      
+      reorganizeFolderContents(mainFolder, oldFolder, oldDate);
+    }
+  }
+  
+  // Now, handle the previous organizational structure (Year -> Month -> Week -> Day) without Part level
+  reorganizePreviousStructure(mainFolder);
+}
+
+/****************************************************
+ * Helper function to reorganize files from old folder structure.
+ ****************************************************/
+function reorganizeFolderContents(mainFolder, oldFolder, oldDate) {
+  var yearStr = oldDate.getFullYear().toString();
+  var monthNames = ["January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"];
+  var monthStr = monthNames[oldDate.getMonth()];
+  var monday = getMonday(oldDate);
+  var weekFolderName = "Week of " + (monday.getMonth()+1) + "/" + monday.getDate();
+  var dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  var dayFolderName = dayNames[oldDate.getDay()] + " " + ((oldDate.getMonth() + 1) + "/" + oldDate.getDate());
+  
+  var yearFolder = getOrCreateFolder(mainFolder, yearStr);
+  var monthFolder = getOrCreateFolder(yearFolder, monthStr);
+  var weekFolder = getOrCreateFolder(monthFolder, weekFolderName);
+  var dayFolder = getOrCreateFolder(weekFolder, dayFolderName);
+  
+  // Move all files from the old folder into appropriate Part folders
+  var files = oldFolder.getFiles();
+  while (files.hasNext()){
+    var file = files.next();
+    var fileName = file.getName();
+    
+    // Extract the Part info from the filename (e.g., "LastName_F_ASC_Compliance Report")
+    var partMatch = fileName.match(/_([^_]+)_Compliance Report$/);
+    var partName = partMatch && partMatch[1] ? partMatch[1] : "Unknown";
+    
+    // Create a Part folder and move the file there
+    var partFolder = getOrCreateFolder(dayFolder, partName);
+    
+    var existing = partFolder.getFilesByName(fileName);
+    if (!existing.hasNext()){
+      file.moveTo(partFolder);
+      Logger.log("Moved " + fileName + " to folder " + partFolder.getName());
+    }
+  }
+  
+  // Trash the old folder if empty
+  if (!oldFolder.getFiles().hasNext() && !oldFolder.getFolders().hasNext()){
+    oldFolder.setTrashed(true);
+    Logger.log("Trashed empty old folder: " + folderName);
+  }
+}
+
+/****************************************************
+ * Handle reorganizing files from the previous structure (without Part folders) 
+ * to the new structure with Part folders.
+ ****************************************************/
+function reorganizePreviousStructure(mainFolder) {
+  // Process Year folders
+  var yearFolders = mainFolder.getFolders();
+  while (yearFolders.hasNext()) {
+    var yearFolder = yearFolders.next();
+    var yearName = yearFolder.getName();
+    
+    // Check if this is a year folder (4-digit number)
+    if (/^\d{4}$/.test(yearName)) {
+      // Process Month folders
+      var monthFolders = yearFolder.getFolders();
+      while (monthFolders.hasNext()) {
+        var monthFolder = monthFolders.next();
+        
+        // Process Week folders
+        var weekFolders = monthFolder.getFolders();
+        while (weekFolders.hasNext()) {
+          var weekFolder = weekFolders.next();
+          
+          // Process Day folders
+          var dayFolders = weekFolder.getFolders();
+          while (dayFolders.hasNext()) {
+            var dayFolder = dayFolders.next();
+            
+            // Process files in each Day folder and move them to appropriate Part folders
+            var files = dayFolder.getFiles();
+            var movedAnyFiles = false;
+            
+            while (files.hasNext()) {
+              var file = files.next();
+              var fileName = file.getName();
+              
+              // Extract the Part info from the filename
+              var partMatch = fileName.match(/_([^_]+)_Compliance Report$/);
+              var partName = partMatch && partMatch[1] ? partMatch[1] : "Unknown";
+              
+              // Create a Part folder and move the file there
+              var partFolder = getOrCreateFolder(dayFolder, partName);
+              
+              var existing = partFolder.getFilesByName(fileName);
+              if (!existing.hasNext()) {
+                file.moveTo(partFolder);
+                movedAnyFiles = true;
+                Logger.log("Moved " + fileName + " to folder " + partFolder.getName());
+              }
+            }
+            
+            if (movedAnyFiles) {
+              Logger.log("Reorganized files in day folder: " + dayFolder.getName());
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+function resetProcessing() {
+  var props = PropertiesService.getScriptProperties();
+  props.deleteProperty('currentRowIndex');
+  Logger.log("Processing reset. Will start from row 1 on next run.");
+}-e \n\n---\n\n
+### FILE: ./scripts/compliance-reports/README.md
+# Compliance Reports Suite
+
+A comprehensive Google Apps Script automation suite for managing court compliance reporting workflows. This system streamlines the process of tracking court dates, generating compliance reports, and coordinating communications between Innovating Justice staff and court personnel.
+
+## Overview
+
+The Compliance Reports Suite automates the end-to-end workflow for managing court compliance requirements:
+
+- **Data Synchronization**: Automatically pulls and updates court dates across multiple spreadsheets
+- **Report Generation**: Creates formatted compliance reports in Google Docs with proper filing structure
+- **Email Management**: Sends targeted email notifications to court staff organized by part
+- **Progress Tracking**: Maintains processing state and batch management for large datasets
+
+## Suite Components
+
+### 🛠️ [`sheets-menu/`](./sheets-menu/)
+Provides the custom Google Sheets interface with intuitive tool access and built-in help system.
+- `ComplianceCustomMenu.gs` - Main menu interface and navigation
+- `ToolGuide.gs` - User help and documentation system
+
+### 📧 [`drafting-emails/`](./drafting-emails/)
+Automates email generation and delivery to court staff, with targeting by court part and customizable content based on upcoming court dates.
+- `SendEmailDrafts.gs` - Email automation and communication routing
+
+### 📊 [`tracking-dates/`](./tracking-dates/)
+Handles all court date synchronization and data management between master sheets and working documents. Includes intelligent filtering, deduplication, and bidirectional updates while preserving historical data.
+- `PullUpcomingDates.gs` - Data synchronization and court date management
+- `PushUpdatedDates.gs` - Bidirectional data updates
+
+### 📝 [`report-generation/`](./report-generation/)
+Manages the batch processing of compliance reports with customizable templates. Organizes reports in nested folder structures and handles multiple Resource Coordinators with smart duplicate detection and progress tracking.
+- `GenerateComplianceDrafts.gs` - Report generation and file organization
+- `README.md` - Detailed implementation guide
+
+## Workflow Integration
+
+The suite components work together in a typical workflow:
+
+1. **Pull Dates** (`tracking-dates`) - Sync upcoming court dates from master sheets
+2. **Generate Reports** (`report-generation`) - Create compliance documents in organized folders
+3. **Send Emails** (`drafting-emails`) - Notify court staff with targeted communications
+4. **Update Records** (`tracking-dates`) - Push any changes back to master sheets
+
+All functions are accessible through the **Compliance Tools** menu (`sheets-menu`) integrated directly into your Google Sheets interface.
+
+## Key Features
+
+✅ **Automated Workflow** - Reduces manual data entry and processing time  
+✅ **Batch Processing** - Handles large datasets efficiently with progress tracking  
+✅ **Smart Organization** - Maintains clean folder structures and prevents duplicates  
+✅ **Multi-User Support** - Configurable for different staff members and roles  
+✅ **Error Handling** - Robust logging and error recovery mechanisms  
+✅ **Extensible Design** - Easy to modify for changing requirements  
+
+## Quick Start
+
+1. **Setup**: Configure sheet IDs and email mappings in the respective component folders
+2. **Menu Access**: Open your Google Sheet to access the "🛠️ Compliance Tools" menu
+3. **Workflow**: Use the tools in sequence - pull dates, generate reports, send emails
+4. **Monitoring**: Check logs and progress through the built-in tracking system
+
+## Usage Notes
+
+- The system is designed to work with existing Google Sheets and Drive infrastructure
+- All scripts include comprehensive logging for troubleshooting
+- Batch processing prevents timeout issues with large datasets
+- Email routing is configurable based on user authentication
+
+---
+
+*For detailed implementation instructions and configuration options, see the individual README files in each component folder.*
+-e \n\n---\n\n
+### FILE: ./scripts/mcjc-ifier/README.md
+# MCJC-ifier
+
+A Google Apps Script automation tool for the Manhattan Justice Opportunities (MJO) program to streamline case referrals to the Midtown Community Justice Center (MCJC).
+
+## Overview
+
+The MCJC-ifier automates the manual process of sorting cases, generating referral emails, and creating CSV reports when forwarding eligible cases to our partner organization, Midtown Community Justice Center. The tool processes case data based on predefined criteria and automatically categorizes cases into those that should be referred to MCJC versus those that remain with MJO.
+
+## Workflow 
+
+A resource coordinator will paste a table of cases to process. They click a button to run the MCJC-ifier which sends an email to them (it knows which email to use based on the user's Gmail account) containing:
+1. Drafts of the emails we send to MCJC with case information 
+2. An attached CSV of the cases we are sending to MCJC
+3. An attached CSV of the cases we are keeping
+
+What used to take 15 to 30 minutes of manually checking cases, sending emails, and creating tables now happens with a single click.
+
+## Features
+
+### Core Functionality (`MCJC-ifier.gs`)
+- **Automated Case Sorting**: Processes spreadsheet data to identify cases meeting MCJC referral criteria
+- **Email Generation**: Creates personalized referral emails with case details
+- **CSV Report Generation**: Produces separate CSV files for MCJC referrals and MJO cases
+- **Multi-criteria Evaluation**: Evaluates cases based on:
+  - Arrest precinct (10, 13, 14, 17, 18, 20)
+  - Specific charges (PL 220.03)
+  - APY (Adolescent and Young Adult) eligibility
+  - Weekend processing requirements
+
+### Data Validation (`MainSheetChecker.gs`)
+- **Duplicate Detection**: Cross-references cases against main database to prevent duplicate processing
+- **Flexible Search Options**: 
+  - Search all database tabs
+  - Search specific monthly tabs
+- **Comprehensive Logging**: Detailed console logging for troubleshooting and audit trails
+
+## Setup Instructions
+
+### Prerequisites
+- Access to Google Sheets with the case data
+- Google Apps Script editor permissions
+- Email access for the configured user accounts
+
+### Installation
+1. Open your Google Sheet containing case data
+2. Go to `Extensions > Apps Script`
+3. Replace the default code with the provided scripts:
+   - `MCJC-ifier.gs`
+   - `MainSheetChecker.gs`
+4. Update the `EXTERNAL_SHEET_ID` constant in `MainSheetChecker.gs` with your main database spreadsheet ID
+5. Configure user email mappings in the `userMap` object within `MCJC-ifier.gs`
+
+## Usage
+
+### Processing Case Referrals
+1. Open your case data spreadsheet
+2. Run the `processSheet()` function from the Apps Script editor, or set up a custom menu/button
+3. Enter the mandate date when prompted
+4. The script will:
+   - Analyze each case against referral criteria
+   - Generate personalized emails for MCJC referrals
+   - Create CSV attachments for both MCJC and MJO cases
+   - Send email with attachments to the configured recipient
+
+### Checking for Duplicates
+1. Run the `findDocketMatches()` function
+2. Choose search scope:
+   - **All tabs**: Searches entire database
+   - **Specific month**: Searches only specified month + MCJC Referrals tab
+3. Results appear in Column K:
+   - Sheet name if case found in database
+   - "Missing" if case not found
+
+### Utility Functions
+- `clearResults()`: Clears Column K results
+- `runFullProcess()`: Combines clear and lookup operations
+
+## Data Structure
+
+### Expected Input Format
+The script expects case data with the following columns:
+- Column A: Name
+- Column B: Docket Number
+- Column C: Arrest Precinct
+- Column D: [Other data]
+- Column E: Top Charge
+- Column F: Number of Sessions
+- Columns G-I: Attorney information
+- Column J: APY Eligibility (Yes/No)
+
+### Output Files
+- **MCJC_Referrals.csv**: Cases meeting referral criteria
+- **MJO_Referrals.csv**: Cases remaining with MJO
+
+## Referral Criteria
+
+Cases are referred to MCJC if they meet ANY of the following criteria:
+- **Precinct-based**: Arrest occurred in precincts 10, 13, 14, 17, 18, or 20
+- **Charge-based**: Top charge is PL 220.03
+- **APY Eligibility**: Case involves adolescent/young adult participant
+- **Weekend Processing**: Case processed on weekend (Saturday/Sunday)
+
+## Configuration
+
+### User Email Mapping
+Update the `userMap` object in `MCJC-ifier.gs`:
+```javascript
+var userMap = {
+  'user@organization.org': 'recipient@courts.gov',
+  // Add additional mappings as needed
+};
+```
+
+### Excluded Database Sheets
+Modify the `EXCLUDED_SHEET_NAMES` array in `MainSheetChecker.gs` to skip specific tabs:
+```javascript
+const EXCLUDED_SHEET_NAMES = [
+  'Alchemer Master Sheet - No edits allowed',
+  'RC Calendar',
+  'Salesforce_Engagements',
+  'MCJC Data',
+  'MCJC Referrals',
+  'RESET'
+];
+```
+
+## Error Handling
+
+Both scripts include comprehensive error handling:
+- Try-catch blocks for main operations
+- Detailed logging for troubleshooting
+- User-friendly error messages
+- Graceful handling of missing data
+
+## Logging and Monitoring
+
+The scripts provide extensive logging through:
+- `console.log()` for real-time debugging
+- `Logger.log()` for persistent logging
+- Progress indicators for long-running operations
+- Execution summaries with timing and statistics
+
+## Security Considerations
+
+- Email addresses are mapped to prevent unauthorized access
+- External spreadsheet access is controlled via specific Sheet IDs
+- User permissions are validated through Google's authentication system
+
+## Troubleshooting
+
+### Common Issues
+1. **"No data found"**: Ensure case data starts from row 3
+2. **Email not sending**: Verify user email mapping and permissions
+3. **External sheet access**: Confirm `EXTERNAL_SHEET_ID` is correct and accessible
+4. **Slow performance**: Check database size and consider specific month searches
+
+### Debug Information
+Enable detailed logging by checking the Apps Script console and Logger outputs for execution traces and error messages.
+
+## Maintenance
+
+### Regular Tasks
+- Update user email mappings as staff changes
+- Review and update excluded sheet names
+- Monitor execution logs for performance issues
+- Validate referral criteria against current policies
+-e \n\n---\n\n
+### FILE: ./scripts/mcjc-ifier/MCJC-ifier.gs
+function processSheet() {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var data = sheet.getDataRange().getValues();
+    var mandateDate = getMandateDate();
+    
+    if (!mandateDate) return; // Exit if no date is provided
+    
+    var mandateDay = new Date(mandateDate).getDay();
+    var isWeekend = (mandateDay === 0 || mandateDay === 6);
+    
+    // Updated header to include "Number of Sessions" in column F
+    var mcjcReferrals = [["Mandate Date", "Docket Number", "Name", "Referral Reason", "Other Reasons", "Number of Sessions", "Attorney Listed"]];
+    var mjoReferrals = [["Mandate Date", "Docket Number", "Name", "Charge", "", "Number of Sessions"]];
+    var emailContent = "";
+    
+    // Determine user and set corresponding email address
+    var userMap = {
+      'meredithk@innovatingjustice.org': 'kmeredith@nycourts.gov',
+    // ... add other users
+    };
+    
+    var currentUserEmail = Session.getActiveUser().getEmail();
+    var userEmail = userMap[currentUserEmail];
+    
+    var morningOrAfternoon = (new Date().getHours() < 12) ? "Good morning" : "Good afternoon";
+    
+    for (var i = 2; i < data.length; i++) {
+      var arrestPct = data[i][2];
+      var topCharge = data[i][4];
+      var apyEligible = data[i][9].trim().toLowerCase() === "yes";
+      var matchesPrecinct = [10, 13, 14, 17, 18, 20].includes(arrestPct);
+      var matchesCharge = topCharge === "PL 220.03";
+      
+      var isAPYEligible = apyEligible;
+      var matchesCriteria = matchesPrecinct || matchesCharge || isWeekend || isAPYEligible;
+
+      if (matchesCriteria) {
+        var reasons = [];
+        var specificReasons = [];
+        
+        if (matchesPrecinct) {
+          reasons.push("the precinct");
+          specificReasons.push("Precinct " + arrestPct);
+        }
+        if (matchesCharge) {
+          reasons.push("the charge");
+          specificReasons.push("220.03");
+        }
+        if (isAPYEligible) {
+          reasons.push("APY eligibility");
+          specificReasons.push("APY Eligible");
+        }
+        if (isWeekend) {
+          reasons.push("this being a weekend referral");
+          specificReasons.push("Weekend");
+        }
+
+        var formattedReasons = formatReasons(reasons);
+        var referralReason = specificReasons[0] || "";
+        var otherReasons = specificReasons.length > 1 ? specificReasons.slice(1).join(", ") : "";
+        
+        // Filter attorney fields; if all are empty, attorneysListed becomes an empty string
+        var attorneyArray = [data[i][6], data[i][7], data[i][8]];
+        var attorneysListed = attorneyArray.filter(function(item) {
+          return item.toString().trim() !== "";
+        }).join(", ");
+        
+        mcjcReferrals.push([
+          mandateDate,
+          data[i][1],
+          data[i][0],
+          referralReason,
+          otherReasons,
+          data[i][5],
+          attorneysListed
+        ]);
+
+        var dueToText = "due to " + formattedReasons;
+        emailContent += `${morningOrAfternoon},\n\nI am forwarding the following case ${dueToText}.\n\n`;
+        emailContent += `${data[i][0]}\n${data[i][1]}\n${data[i][5]} Sessions\n`;
+        
+        if (attorneysListed) {
+          emailContent += `Attorney listed: ${attorneysListed}\n`;
+        }
+        
+        emailContent += specificReasons.join(", ") + `\nMandate Date: ${mandateDate}\n\nBest,\n\n`;
+        emailContent += "-----------------------------------------------------\n\n";
+
+      } else {
+        mjoReferrals.push([
+          mandateDate,
+          data[i][1],
+          data[i][0],
+          data[i][4],
+          "",
+          data[i][5]
+        ]);
+      }
+    }
+
+    var mcjcCsv = arrayToCsv(mcjcReferrals);
+    var mjoCsv = arrayToCsv(mjoReferrals);
+    var mcjcBlob = Utilities.newBlob(mcjcCsv, 'text/csv', 'MCJC_Referrals.csv');
+    var mjoBlob = Utilities.newBlob(mjoCsv, 'text/csv', 'MJO_Referrals.csv');
+
+    MailApp.sendEmail({
+      to: userEmail,
+      subject: 'Referrals Report',
+      body: emailContent,
+      attachments: [mcjcBlob, mjoBlob]
+    });
+
+  } catch (e) {
+    Logger.log('An error occurred: ' + e.toString());
+  }
+}
+
+function formatReasons(reasons) {
+  if (reasons.length > 1) {
+    var lastReason = reasons.pop();
+    return reasons.join(", ") + ", and " + lastReason;
+  } else {
+    return reasons[0];
+  }
+}
+
+function getMandateDate() {
+  var ui = SpreadsheetApp.getUi();
+  var response = ui.prompt('Enter the mandate date (e.g., 7/10/2024):');
+  if (response.getSelectedButton() == ui.Button.OK) {
+    return response.getResponseText();
+  }
+  return null;
+}
+
+function arrayToCsv(data) {
+  return data.map(row => row.map(field => {
+    if (typeof field === 'string') {
+      let escapedField = field.replace(/"/g, '""');
+      if (escapedField.search(/("|,|\n)/g) >= 0) {
+        escapedField = `"${escapedField}"`;
+      }
+      return escapedField;
+    } else {
+      return field;
+    }
+  }).join(",")).join("\n");
+}-e \n\n---\n\n
+### FILE: ./scripts/mcjc-ifier/MainSheetChecker.gs
+function findDocketMatches() {
+  const startTime = new Date();
+  console.log('=== STARTING DOCKET LOOKUP ===');
+  console.log('Start time:', startTime.toLocaleTimeString());
+  
+  // External spreadsheet ID
+  const EXTERNAL_SHEET_ID = 'SOURCESHEET_ID';
+  
+  // List of sheet names to exclude (when checking all tabs)
+  const EXCLUDED_SHEET_NAMES = [
+    'Alchemer Master Sheet - No edits allowed',
+    'RC Calendar',
+    'Salesforce_Engagements',
+    'MCJC Data',
+    'MCJC Referrals',
+    'RESET'
+  ];
+  
+  try {
+    console.log('Step 1: Getting user preference...');
+    const ui = SpreadsheetApp.getUi();
+    const userChoice = ui.alert(
+      'Docket Lookup Options',
+      'Do you want to check ALL tabs or a SPECIFIC month?\n\n' +
+      'YES = Check all tabs\n' +
+      'NO = Check specific month\n' +
+      'CANCEL = Exit',
+      ui.ButtonSet.YES_NO_CANCEL
+    );
+    
+    let validSheets = [];
+    let searchMode = '';
+    
+    let monthName = '';
+    
+    if (userChoice === ui.Button.YES) {
+      // Check all tabs
+      searchMode = 'ALL_TABS';
+      console.log('User selected: Check all tabs');
+    } else if (userChoice === ui.Button.NO) {
+      // Check specific month
+      searchMode = 'SPECIFIC_MONTH';
+      console.log('User selected: Check specific month');
+      
+      const monthInput = ui.prompt(
+        'Specific Month Search',
+        'Enter the month and year (e.g., "June 2025"):',
+        ui.ButtonSet.OK_CANCEL
+      );
+      
+      if (monthInput.getSelectedButton() === ui.Button.CANCEL) {
+        console.log('User cancelled month input');
+        return;
+      }
+      
+      monthName = monthInput.getResponseText().trim();
+      console.log('User entered month:', monthName);
+      
+      if (!monthName) {
+        ui.alert('Error', 'Please enter a valid month and year.', ui.ButtonSet.OK);
+        return;
+      }
+    } else {
+      console.log('User cancelled operation');
+      return;
+    }
+    
+    console.log('Step 5: Getting current sheet...');
+    const currentSheet = SpreadsheetApp.getActiveSheet();
+    console.log('Current sheet name:', currentSheet.getName());
+    
+    console.log('Step 6: Opening external spreadsheet...');
+    const externalSpreadsheet = SpreadsheetApp.openById(EXTERNAL_SHEET_ID);
+    console.log('External spreadsheet opened successfully');
+    
+    console.log('Step 7: Getting sheets from external spreadsheet...');
+    const allSheets = externalSpreadsheet.getSheets();
+    console.log('Total sheets found:', allSheets.length);
+    console.log('All sheet names:', allSheets.map(s => s.getName()));
+    
+    if (searchMode === 'ALL_TABS') {
+      validSheets = allSheets.filter(sheet => 
+        !EXCLUDED_SHEET_NAMES.includes(sheet.getName())
+      );
+      console.log('Valid sheets (after exclusions):', validSheets.length);
+    } else if (searchMode === 'SPECIFIC_MONTH') {
+      validSheets = allSheets.filter(sheet => {
+        const sheetName = sheet.getName();
+        return sheetName === monthName || sheetName === 'MCJC Referrals';
+      });
+      console.log(`Valid sheets for month "${monthName}":`, validSheets.length);
+    }
+    
+    console.log('Valid sheet names:', validSheets.map(s => s.getName()));
+    
+    if (validSheets.length === 0) {
+      console.log('No valid sheets found');
+      ui.alert('Error', 'No valid sheets found for the specified criteria.', ui.ButtonSet.OK);
+      return;
+    }
+    
+    console.log('Step 4: Getting data from current sheet...');
+    const lastRow = currentSheet.getLastRow();
+    console.log('Last row in current sheet:', lastRow);
+    
+    if (lastRow < 3) {
+      console.log('No data rows found (need at least row 3)');
+      return;
+    }
+    
+    // Get docket numbers from column B (starting from row 3)
+    const docketRange = currentSheet.getRange(3, 2, lastRow - 2, 1);
+    const docketValues = docketRange.getValues();
+    console.log('Docket values to process:', docketValues.length);
+    
+    // Prepare results array for column K
+    const results = [];
+    
+    console.log('Step 5: Processing each docket number...');
+    // Process each docket number
+    for (let i = 0; i < docketValues.length; i++) {
+      const docketNumber = docketValues[i][0];
+      const rowNum = i + 3; // Actual row number in sheet
+      
+      console.log(`\n--- Processing row ${rowNum} (${i + 1}/${docketValues.length}) ---`);
+      console.log('Docket number:', docketNumber);
+      
+      // Skip empty cells
+      if (!docketNumber || docketNumber.toString().trim() === '') {
+        console.log('Empty docket number, skipping...');
+        results.push(['']);
+        continue;
+      }
+      
+      let matchFound = false;
+      let matchingSheetName = '';
+      
+      // Search through all valid sheets
+      console.log('Searching through', validSheets.length, 'valid sheets...');
+      for (let sheetIndex = 0; sheetIndex < validSheets.length; sheetIndex++) {
+        const sheet = validSheets[sheetIndex];
+        const sheetName = sheet.getName();
+        console.log(`  Checking sheet ${sheetIndex + 1}/${validSheets.length}: "${sheetName}"`);
+        
+        // Get all data from column B in current sheet
+        const sheetLastRow = sheet.getLastRow();
+        console.log(`    Sheet has ${sheetLastRow} rows`);
+        
+        if (sheetLastRow > 0) {
+          const sheetDocketRange = sheet.getRange(1, 2, sheetLastRow, 1);
+          const sheetDocketValues = sheetDocketRange.getValues();
+          console.log(`    Retrieved ${sheetDocketValues.length} values from column B`);
+          
+          // Check for match
+          for (let j = 0; j < sheetDocketValues.length; j++) {
+            const cellValue = sheetDocketValues[j][0];
+            if (cellValue && cellValue.toString().trim() === docketNumber.toString().trim()) {
+              console.log(`    ✓ MATCH FOUND in "${sheetName}" at row ${j + 1}!`);
+              matchFound = true;
+              matchingSheetName = sheetName;
+              break;
+            }
+          }
+          
+          if (matchFound) break;
+        }
+      }
+      
+      // Add result
+      const result = matchFound ? matchingSheetName : 'Missing';
+      results.push([result]);
+      console.log(`Result for row ${rowNum}: "${result}"`);
+      
+      // Log progress every 10 rows
+      if ((i + 1) % 10 === 0) {
+        console.log(`\n*** PROGRESS: Completed ${i + 1}/${docketValues.length} rows ***`);
+      }
+    }
+    
+    console.log('\nStep 6: Writing results to column K...');
+    if (results.length > 0) {
+      const resultRange = currentSheet.getRange(3, 11, results.length, 1);
+      resultRange.setValues(results);
+      console.log('Results written successfully');
+    }
+    
+    const endTime = new Date();
+    const duration = (endTime - startTime) / 1000;
+    const matchCount = results.filter(r => r[0] !== 'Missing' && r[0] !== '').length;
+    
+    console.log('\n=== COMPLETION SUMMARY ===');
+    console.log(`Search mode: ${searchMode === 'ALL_TABS' ? 'All tabs' : `Specific month: ${monthName}`}`);
+    console.log(`Sheets searched: ${validSheets.map(s => s.getName()).join(', ')}`);
+    console.log(`Processed ${results.length} rows in ${duration} seconds`);
+    console.log(`Found ${matchCount} matches`);
+    console.log(`Missing: ${results.length - matchCount}`);
+    console.log('End time:', endTime.toLocaleTimeString());
+    
+    // Also log to Logger for persistence
+    Logger.log(`Completed: ${results.length} rows processed, ${matchCount} matches found in ${duration} seconds`);
+    
+    // Show completion message to user
+    ui.alert(
+      'Lookup Complete',
+      `Processed ${results.length} rows\n` +
+      `Found ${matchCount} matches\n` +
+      `Missing: ${results.length - matchCount}\n` +
+      `Duration: ${duration} seconds`,
+      ui.ButtonSet.OK
+    );
+    
+  } catch (error) {
+    console.log('ERROR:', error.toString());
+    console.log('Error stack:', error.stack);
+    Logger.log('Error: ' + error.toString());
+    
+    const ui = SpreadsheetApp.getUi();
+    ui.alert('Error', 'An error occurred: ' + error.toString(), ui.ButtonSet.OK);
+  }
+}
+
+// Optional: Function to clear column K before running
+function clearResults() {
+  const ui = SpreadsheetApp.getUi();
+  const response = ui.alert(
+    'Clear Results',
+    'Are you sure you want to clear all results in column K?',
+    ui.ButtonSet.YES_NO
+  );
+  
+  if (response === ui.Button.YES) {
+    const currentSheet = SpreadsheetApp.getActiveSheet();
+    const lastRow = currentSheet.getLastRow();
+    
+    if (lastRow >= 3) {
+      const clearRange = currentSheet.getRange(3, 11, lastRow - 2, 1);
+      clearRange.clearContent();
+      console.log('Column K cleared');
+      ui.alert('Success', 'Column K has been cleared.', ui.ButtonSet.OK);
+    } else {
+      ui.alert('Info', 'No data to clear.', ui.ButtonSet.OK);
+    }
+  }
+}
+
+// Optional: Function to run both clear and find
+function runFullProcess() {
+  const ui = SpreadsheetApp.getUi();
+  const response = ui.alert(
+    'Full Process',
+    'This will clear column K and then run the docket lookup. Continue?',
+    ui.ButtonSet.YES_NO
+  );
+  
+  if (response === ui.Button.YES) {
+    // Clear first
+    const currentSheet = SpreadsheetApp.getActiveSheet();
+    const lastRow = currentSheet.getLastRow();
+    
+    if (lastRow >= 3) {
+      const clearRange = currentSheet.getRange(3, 11, lastRow - 2, 1);
+      clearRange.clearContent();
+      console.log('Column K cleared before lookup');
+    }
+    
+    // Then run lookup
+    findDocketMatches();
+  }
+}-e \n\n---\n\n
+### FILE: ./scripts/README.md
+# Scripts
+
+This folder contains Google Apps Script automation tools for managing court compliance workflows, case tracking, and administrative tasks. The scripts are organized into functional modules that handle different aspects of the court case management system.
+
+## 📁 Folder Structure
+
+### [compliance-reports/](./compliance-reports/)
+**Court Date Management & Compliance Tracking**
+- Automated pulling of upcoming court dates from source sheets
+- Syncing updated court dates back to master sheets  
+- Progress tracking and batch processing for large datasets
+- Handles date validation, duplicate checking, and data organization
+
+### [sheets-menu/](./sheets-menu/)
+**Custom Google Sheets Interface**
+- Custom menu system for easy access to compliance tools
+- Tool guide and help documentation
+- User-friendly interface for running automated functions
+
+### [drafting-emails/](./drafting-emails/)
+**Email Automation & Communication**
+- Automated generation of compliance report emails grouped by court part
+- Draft email creation with case details and attachments
+- User mapping and email routing based on active user
+
+### [report-generation/](./report-generation/)
+**Document Creation & File Management**
+- Batch generation of compliance reports from Google Doc templates
+- Automated folder organization by date hierarchy (Year/Month/Week/Day/Part)
+- Template processing with dynamic data replacement
+- File naming conventions and duplicate handling
+
+### [mcjc-ifier/](./mcjc-ifier/)
+**Case Processing & Referral Management**
+- Automated case categorization based on precinct, charges, and eligibility criteria
+- CSV generation for MCJC and MJO referrals
+- Email content generation for case referrals
+- APY eligibility processing and weekend referral handling
+
+### [group-calendar/](./group-calendar/)
+**Calendar & Scheduling Integration**
+- Integration with Acuity Scheduling API for class/group management
+- Automated calendar generation with color-coded class types
+- Monthly calendar layouts with facilitator assignments
+- API credential management and connection testing
+
+## 🔧 Key Features
+
+- **Data Synchronization**: Automated pulling and pushing of court dates between different Google Sheets
+- **Batch Processing**: Handles large datasets with progress tracking and execution time management
+- **File Organization**: Intelligent folder structures for document management
+- **Email Automation**: Streamlined communication workflows for court compliance
+- **Template Processing**: Dynamic document generation from standardized templates
+- **API Integration**: External service connectivity for scheduling and calendar management
+
+## 🚀 Getting Started
+
+1. **Setup**: Each subfolder contains specific setup instructions and configuration requirements
+2. **Authentication**: Some scripts require API credentials stored in Google Apps Script Properties
+3. **Permissions**: Scripts require appropriate Google Workspace permissions for Sheets, Drive, and Gmail access
+4. **Execution**: Most functions are accessible through custom menu systems in Google Sheets
+
+## 📋 Prerequisites
+
+- Google Apps Script environment
+- Access to Google Sheets, Drive, and Gmail APIs
+- Appropriate permissions for the target Google Workspace
+- For calendar features: Acuity Scheduling API credentials
+
+## 🔗 Related Documentation
+
+Each subfolder contains its own README.md with detailed implementation notes, function descriptions, and usage examples.
+-e \n\n---\n\n
