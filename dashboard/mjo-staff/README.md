@@ -3,7 +3,7 @@
 
 
 # 👥 MJO Staff Directory | MJO Dashboard
-![Staff Directory Screenshot](../images/mjo-staff.png)
+![Staff Directory Screenshot](../images/mjostaff.png)
 
 The **MJO Staff Directory** is more than just a contact list — it's a critical configuration tool that powers core functionality across the dashboard. It centralizes key identifiers needed for Slack messaging, user sessions, and appointment syncing.
 
