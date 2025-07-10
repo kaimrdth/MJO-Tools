@@ -61,7 +61,7 @@ In your Google Sheets document, create a sheet named **"Group Lookup Table"** wi
 ## Usage
 
 ### Generating a Monthly Calendar
-
+![Group Calendar Menu](../images/groupcalendarmenu.png)
 1. **Open your Google Sheets document**
 2. **Access the menu**: `📅 Generate Group Calendars` → `Generate Groups Calendar`
 3. **Enter the month and year** (e.g., "July 2025", "December 2024")
