@@ -132,12 +132,34 @@ The shopping cart displays:
 - **Real-Time Updates**: Reflects changes immediately
 
 
+
 ### Technical Implementation Notes
 - **User Authentication**: USEREMAIL() function for session management
 - **Session Isolation**: User-specific cart functionality
 - **Referential Integrity**: Proper linking between Supplies and Cart tables
 - **Data Validation**: Prevents negative inventory levels
 - **Concurrent Processing**: Handles multiple simultaneous users
+
+### Slack Integration
+
+A Slack integration is configured to notify the office manager when supply quantities fall to low levels. Specifically, when the quantity of any item reaches 3, a direct message is sent automatically.
+
+#### Configuration Details
+
+- **AppSheet Bot**
+  - **Event Source**: App
+  - **Table**: Inventory
+  - **Data Change Type**: Updates
+  - **Condition**: `[Quantity] = 3`
+- **Action**
+  - **Type**: Call a Webhook
+  - **Destination**: Slack webhook that triggers a Slack workflow
+  - **HTTP Request JSON Payload**:
+    ```json
+    {
+      "text": "There are 3 left of <<Item>>."
+    }
+    ```
 
 [↑ Jump to top](#supplies---mjo-dashboard)
 
