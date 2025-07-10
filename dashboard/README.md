@@ -39,6 +39,5 @@ The documentation below is organized by feature. Each folder contains:
 
 ## Notes
 
-- For media and demos, see [`media/`](../media/)
 - This dashboard is actively used by 35+ staff and supports services for over 3,000 participants annually.
 - View-by-view documentation will continue to evolve as features are added or refactored.
