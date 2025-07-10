@@ -78,10 +78,10 @@ It streamlines phone distribution and improves clarity across roles.
                |
                | 1. Submit Request via Form
                v
-+-------------------------------+
-|   Phone Distribution Table    |
++----------------------------------+
+|   Phone Distribution Table       |
 | (New record with Status=Pending) |
-+-------------------------------+
++----------------------------------+
                |
                | 2. AppSheet Bot (On Add)
                v
@@ -92,10 +92,10 @@ It streamlines phone distribution and improves clarity across roles.
                |
                | 3. Office Manager Views Dashboard
                v
-+-------------------------------+
-|   Office Manager Updates      |
++---------------------------------+
+|   Office Manager Updates        |
 |   (Phone Number, Notes, Status) |
-+-------------------------------+
++---------------------------------+
                |
                | 4. AppSheet Bot (On Update)
                v
