@@ -29,6 +29,5 @@ Once submitted, the item is added to the live donations catalog.
 
 When a case manager or social worker finds an item a participant needs, they can click the **Distribute** action. This removes the item from the catalog, preventing it from being double-distributed.
 
-No complex logic—just a reliable, streamlined way to make donated clothing accessible when it’s needed most.
 
 ---
