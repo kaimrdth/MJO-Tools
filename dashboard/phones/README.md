@@ -69,4 +69,40 @@ This feature introduces:
 
 It streamlines phone distribution and improves clarity across roles.
 
+## 🧭 System Diagram
+
+```plaintext
++-------------------------------+
+|  Case Manager / Social Worker |
++-------------------------------+
+               |
+               | 1. Submit Request via Form
+               v
++-------------------------------+
+|   Phone Distribution Table    |
+| (New record with Status=Pending) |
++-------------------------------+
+               |
+               | 2. AppSheet Bot (On Add)
+               v
++-------------------------------+
+|   Slack Webhook Notification  |
+|   (New Phone Request Alert)   |
++-------------------------------+
+               |
+               | 3. Office Manager Views Dashboard
+               v
++-------------------------------+
+|   Office Manager Updates      |
+|   (Phone Number, Notes, Status) |
++-------------------------------+
+               |
+               | 4. AppSheet Bot (On Update)
+               v
++-------------------------------+
+|   Slack Webhook Notification  |
+|   (Fulfillment Confirmation)  |
++-------------------------------+
+```
+
 ---
