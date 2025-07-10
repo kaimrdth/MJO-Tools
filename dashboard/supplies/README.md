@@ -16,7 +16,7 @@ The Supplies system functions as a centralized inventory management tool where s
 ![Supplies Main View](../images/supplies.png)
 *Main supplies interface showing inventory levels with search and cart functionality*
 
-[↑ Jump to top](#table-of-contents)
+[↑ Jump to top](#supplies---mjo-dashboard)
 
 ## Key Features
 
@@ -28,7 +28,7 @@ The Supplies system functions as a centralized inventory management tool where s
 - Quick search functionality across all supply items
 - Filter by category, item name, or availability
 
-[↑ Jump to top](#table-of-contents)
+[↑ Jump to top](#supplies---mjo-dashboard)
 
 ### 3. **Shopping Cart System**
 - **Add to Cart**: Select items for checkout
@@ -36,7 +36,7 @@ The Supplies system functions as a centralized inventory management tool where s
 - **Quantity Management**: Adjust quantities before checkout
 - **Session-Based**: Individual carts per user session
 
-[↑ Jump to top](#table-of-contents)
+[↑ Jump to top](#supplies---mjo-dashboard)
 
 ### 4. **Checkout Process**
 - **Confirm Checkout**: Final confirmation before inventory update
@@ -48,7 +48,7 @@ The Supplies system functions as a centralized inventory management tool where s
 - **Individual Cart Sessions**: Each staff member has their own cart
 - **Concurrent Access**: Multiple staff can use system simultaneously
 
-[↑ Jump to top](#table-of-contents)
+[↑ Jump to top](#supplies---mjo-dashboard)
 
 ## User Interface Components
 
@@ -69,7 +69,7 @@ The shopping cart displays:
 - **Remove Items**: Option to remove items from cart
 - **Checkout Button**: Confirm and process distribution
 
-[↑ Jump to top](#table-of-contents)
+[↑ Jump to top](#supplies---mjo-dashboard)
 
 ### Action Controls
 - **Search Bar**: Find specific supplies quickly
@@ -109,7 +109,7 @@ The shopping cart displays:
   - **View Details**: Display full item information
   - **Check Inventory**: Real-time inventory status
 
-[↑ Jump to top](#table-of-contents)
+[↑ Jump to top](#supplies---mjo-dashboard)
 
 ### Cart System Implementation
 
@@ -139,7 +139,7 @@ The shopping cart displays:
 - **Data Validation**: Prevents negative inventory levels
 - **Concurrent Processing**: Handles multiple simultaneous users
 
-[↑ Jump to top](#table-of-contents)
+[↑ Jump to top](#supplies---mjo-dashboard)
 
 ## Best Practices
 
@@ -149,7 +149,7 @@ The shopping cart displays:
 3. **Immediate Checkout**: Complete checkout promptly to free up inventory
 4. **Search Utilization**: Use search function for quick item location
 
-[↑ Jump to top](#table-of-contents)
+[↑ Jump to top](#supplies---mjo-dashboard)
 
 ### For Inventory Management
 1. **Regular Restocking**: Monitor inventory levels for reorder needs
@@ -157,4 +157,4 @@ The shopping cart displays:
 3. **Category Organization**: Maintain clear categorization for easy searching
 4. **Usage Monitoring**: Track distribution patterns for better planning
 
-[↑ Jump to top](#table-of-contents)
+[↑ Jump to top](#supplies---mjo-dashboard)
