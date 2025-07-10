@@ -31,7 +31,6 @@ The documentation below is organized by feature. Each folder contains:
 | [resource-portal](./resource-portal/)   | Curated database of NYC service providers        |
 | [supplies](./supplies/)               | Inventory of distributed items (e.g., clothes, hygiene kits)   |
 | [phones](./phones/)                   | Phone request and fulfillment workflow, integrated with Slack     |
-| [attorney-rolodex](./attorney-rolodex/)| Reference view of public defenders and attorneys                   |
 | [donations](./donations/)             | Tracks received donations and inventory flow                      |
 | [mjo-staff](./mjo-staff/)             | Staff list, permissions, and user-level customization              |
 | [special-instructions](./special-instructions/)| Records participant-specific precautions or notes           |
