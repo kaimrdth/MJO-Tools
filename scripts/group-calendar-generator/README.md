@@ -2,6 +2,8 @@
 
 A Google Apps Script tool that automatically generates visual monthly calendars for group classes by fetching data from Acuity Scheduling and organizing it in Google Sheets.
 
+![Group Calendar Menu](groupcalendarmenu.png)
+
 ## Features
 
 - **Monthly Calendar Generation**: Creates formatted monthly calendars showing all group classes
@@ -61,7 +63,7 @@ In your Google Sheets document, create a sheet named **"Group Lookup Table"** wi
 ## Usage
 
 ### Generating a Monthly Calendar
-![Group Calendar Menu](groupcalendarmenu.png)
+
 1. **Open your Google Sheets document**
 2. **Access the menu**: `📅 Generate Group Calendars` → `Generate Groups Calendar`
 3. **Enter the month and year** (e.g., "July 2025", "December 2024")
