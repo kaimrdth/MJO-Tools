@@ -2,7 +2,7 @@
 
 The **Home** view serves as the central operational dashboard for daily office operations, providing staff with a real-time overview of appointments, participant check-ins, and front desk workflows. This dashboard dynamically displays the current date and consolidates multiple data streams to create a comprehensive view of daily activities.
 
-![Home View Screenshot](../images/home-view.png)
+![Home View Screenshot](../images/dashboard.png)
 
 **[Jump to AppSheet Setup](#appsheet-setup)**
 
