@@ -1,46 +1,15 @@
 # Supplies - MJO Dashboard
 
-## Table of Contents
 
-1. [Overview](#overview)
-2. [Purpose and Functionality](#purpose-and-functionality)
-3. [Screenshots](#screenshots)
-4. [Key Features](#key-features)
-   - [Real-Time Inventory Tracking](#1-real-time-inventory-tracking)
-   - [Searchable Supply Database](#2-searchable-supply-database)
-   - [Shopping Cart System](#3-shopping-cart-system)
-   - [Checkout Process](#4-checkout-process)
-   - [User Session Management](#5-user-session-management)
-5. [User Interface Components](#user-interface-components)
-   - [Supply Display](#supply-display)
-   - [Cart Interface](#cart-interface)
-   - [Action Controls](#action-controls)
-6. [Benefits for Staff](#benefits-for-staff)
-   - [Inventory Management](#inventory-management)
-   - [Client Service Enhancement](#client-service-enhancement)
-   - [Administrative Efficiency](#administrative-efficiency)
-7. [AppSheet Configuration](#appsheet-configuration)
-   - [View Configuration](#view-configuration)
-   - [Cart System Implementation](#cart-system-implementation)
-   - [Inventory Tracking System](#inventory-tracking-system)
-   - [Technical Implementation Notes](#technical-implementation-notes)
-8. [Best Practices](#best-practices)
-   - [For Staff Usage](#for-staff-usage)
-   - [For Inventory Management](#for-inventory-management)
-
----
 
 ## Overview
 
 The Supplies feature is a real-time inventory management system that allows staff to check availability and check out items for clients. This streamlined supply distribution system maintains accurate inventory levels while providing a user-friendly interface for staff to quickly locate and distribute necessary supplies to participants.
 
-[↑ Jump to top](#table-of-contents)
 
 ## Purpose and Functionality
 
 The Supplies system functions as a centralized inventory management tool where staff can view real-time supply availability, search for specific items, and check out supplies for client distribution. It eliminates inventory confusion and ensures accurate tracking of supply distribution across all staff members.
-
-[↑ Jump to top](#table-of-contents)
 
 ## Screenshots
 
@@ -54,16 +23,10 @@ The Supplies system functions as a centralized inventory management tool where s
 ### 1. **Real-Time Inventory Tracking**
 - Live inventory level updates across all user sessions
 - Automatic quantity adjustments upon checkout
-- Instant visibility of supply availability
-- Prevents over-distribution of limited items
-
-[↑ Jump to top](#table-of-contents)
 
 ### 2. **Searchable Supply Database**
 - Quick search functionality across all supply items
 - Filter by category, item name, or availability
-- Comprehensive supply catalog with detailed information
-- Easy identification of needed items
 
 [↑ Jump to top](#table-of-contents)
 
@@ -77,16 +40,12 @@ The Supplies system functions as a centralized inventory management tool where s
 
 ### 4. **Checkout Process**
 - **Confirm Checkout**: Final confirmation before inventory update
-- **Automatic Inventory Adjustment**: Real-time quantity reduction
 - **Transaction Recording**: Track who checked out what items
 - **Clear Cart**: Reset cart after successful checkout
 
-[↑ Jump to top](#table-of-contents)
 
 ### 5. **User Session Management**
 - **Individual Cart Sessions**: Each staff member has their own cart
-- **Session Isolation**: Staff cannot see other users' pending selections
-- **User-Specific Tracking**: Personal checkout history and preferences
 - **Concurrent Access**: Multiple staff can use system simultaneously
 
 [↑ Jump to top](#table-of-contents)
@@ -101,8 +60,6 @@ Each supply item includes:
 - **Item Description**: Detailed information about the supply
 - **Location**: Storage location within facility
 - **Add to Cart Button**: Selection control for checkout
-
-[↑ Jump to top](#table-of-contents)
 
 ### Cart Interface
 The shopping cart displays:
@@ -121,33 +78,6 @@ The shopping cart displays:
 - **Remove from Cart**: Remove unwanted items
 - **Checkout**: Complete the distribution process
 
-[↑ Jump to top](#table-of-contents)
-
-## Benefits for Staff
-
-### Inventory Management
-- **Real-Time Accuracy**: Always current inventory levels
-- **Prevent Shortages**: Avoid over-distribution of limited supplies
-- **Efficient Distribution**: Quick identification of available items
-- **Automated Tracking**: Automatic inventory updates upon checkout
-
-[↑ Jump to top](#table-of-contents)
-
-### Client Service Enhancement
-- **Faster Service**: Quick supply lookup and distribution
-- **Accurate Information**: Real-time availability prevents disappointment
-- **Comprehensive Options**: Complete supply catalog visibility
-- **Immediate Access**: No waiting for inventory checks
-
-[↑ Jump to top](#table-of-contents)
-
-### Administrative Efficiency
-- **Reduced Manual Tracking**: Automated inventory management
-- **User Accountability**: Track who distributed what supplies
-- **Simplified Process**: Streamlined checkout workflow
-- **Error Prevention**: System prevents negative inventory levels
-
-[↑ Jump to top](#table-of-contents)
 
 ## AppSheet Configuration
 
@@ -201,22 +131,6 @@ The shopping cart displays:
 - **User-Specific**: Shows only current user's cart items
 - **Real-Time Updates**: Reflects changes immediately
 
-[↑ Jump to top](#table-of-contents)
-
-### Inventory Tracking System
-
-#### Checkout Process
-- **Inventory Validation**: Checks available quantity before checkout
-- **Automatic Deduction**: Reduces inventory by cart quantities
-- **Transaction Log**: Records checkout details and user information
-- **Cart Clearing**: Removes items from cart after successful checkout
-
-#### Real-Time Updates
-- **Concurrent Access**: Multiple users see same inventory levels
-- **Immediate Refresh**: Inventory updates instantly across all sessions
-- **Availability Checks**: Prevents checkout of unavailable items
-
-[↑ Jump to top](#table-of-contents)
 
 ### Technical Implementation Notes
 - **User Authentication**: USEREMAIL() function for session management
