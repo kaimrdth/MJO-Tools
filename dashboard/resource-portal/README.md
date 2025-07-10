@@ -1,46 +1,12 @@
 # Resource Portal - MJO Dashboard
 
-## Table of Contents
-
-1. [Overview](#overview)
-2. [Purpose and Functionality](#purpose-and-functionality)
-3. [Screenshots](#screenshots)
-4. [Key Features](#key-features)
-   - [Comprehensive Service Database](#1-comprehensive-service-database)
-   - [Interactive Map Integration](#2-interactive-map-integration)
-   - [Document Management](#3-document-management)
-   - [Data Verification System](#4-data-verification-system)
-   - [Personalized Favorites System](#5-personalized-favorites-system)
-   - [Quick Access Actions](#6-quick-access-actions)
-5. [User Interface Components](#user-interface-components)
-   - [Resource Display](#resource-display)
-   - [Action Buttons](#action-buttons)
-6. [Benefits for Staff](#benefits-for-staff)
-   - [Efficiency Improvements](#efficiency-improvements)
-   - [Quality Assurance](#quality-assurance)
-   - [Participant Experience](#participant-experience)
-7. [AppSheet Configuration](#appsheet-configuration)
-   - [View Configuration](#view-configuration)
-   - [Favorites System Implementation](#favorites-system-implementation)
-   - [Data Verification System](#data-verification-system-1)
-   - [Technical Implementation Notes](#technical-implementation-notes)
-8. [Best Practices](#best-practices)
-   - [For Staff Usage](#for-staff-usage)
-   - [For System Maintenance](#for-system-maintenance)
-
----
-
 ## Overview
 
 The Resource Portal is an internal database of NYC area service providers designed to streamline participant referrals and improve service delivery. This comprehensive resource management system serves as a collective knowledge base for staff, containing information about housing, healthcare, mental health, substance use, public benefits, immigration, employment, education, community service, legal support, and other essential services.
 
-[↑ Jump to top](#table-of-contents)
-
 ## Purpose and Functionality
 
 The Resource Portal functions as a centralized repository where staff can quickly access and manage referral information for participants. It eliminates the need to search through scattered documents, bookmarks, or personal notes by providing a unified platform with up-to-date service provider information.
-
-[↑ Jump to top](#table-of-contents)
 
 ## Screenshots
 
@@ -69,15 +35,11 @@ The Resource Portal functions as a centralized repository where staff can quickl
 - Community service organizations
 - Legal aid and support services
 
-[↑ Jump to top](#table-of-contents)
-
 ### 2. **Interactive Map Integration**
 - Visual location mapping for all service providers
 - Quick access to directions via integrated Google Maps
 - Geographic clustering to identify services by area
 - Street-level navigation for field staff and participants
-
-[↑ Jump to top](#table-of-contents)
 
 ### 3. **Document Management**
 - PDF upload capability for referral one-pagers
@@ -85,7 +47,6 @@ The Resource Portal functions as a centralized repository where staff can quickl
 - Quick access to program-specific documentation
 - Standardized referral forms and templates
 
-[↑ Jump to top](#table-of-contents)
 
 ### 4. **Data Verification System**
 - **Verify Button**: Timestamps resources with "Last verified X days/months ago"
@@ -101,7 +62,6 @@ The Resource Portal functions as a centralized repository where staff can quickl
 - Personal favorites list for each staff member
 - Conditional "My Favorite Resources" view based on user preferences
 
-[↑ Jump to top](#table-of-contents)
 
 ### 6. **Quick Access Actions**
 - **Link to Website**: Direct access to service provider websites
@@ -110,7 +70,6 @@ The Resource Portal functions as a centralized repository where staff can quickl
 - **Verify**: Update verification timestamp
 - **Favorite/Unfavorite**: Personal bookmark management
 
-[↑ Jump to top](#table-of-contents)
 
 ## User Interface Components
 
@@ -126,7 +85,6 @@ Each resource entry includes:
 - **Key Contact**: Primary point of contact for referrals
 - **Last Verified**: Data freshness indicator
 
-[↑ Jump to top](#table-of-contents)
 
 ### Action Buttons
 - **Edit**: Modify resource information
@@ -134,32 +92,6 @@ Each resource entry includes:
 - **Favorite/Unfavorite**: Personal bookmarking
 - **MAP**: Geographic navigation
 - **Verify**: Data verification timestamp
-
-[↑ Jump to top](#table-of-contents)
-
-## Benefits for Staff
-
-### Efficiency Improvements
-- **Faster Referrals**: Quick access to verified service provider information
-- **Reduced Research Time**: Centralized database eliminates redundant searches
-- **Mobile Accessibility**: Field staff can access resources on-the-go
-- **Standardized Process**: Consistent referral procedures across all staff
-
-[↑ Jump to top](#table-of-contents)
-
-### Quality Assurance
-- **Data Verification**: Regular updates ensure accuracy
-- **Collective Knowledge**: Shared database prevents information silos
-- **Documentation**: PDF storage for detailed program information
-- **Tracking**: Favorites system helps identify most useful resources
-
-[↑ Jump to top](#table-of-contents)
-
-### Participant Experience
-- **Accurate Information**: Verified data reduces failed referrals
-- **Geographic Accessibility**: Map integration shows nearby services
-- **Comprehensive Options**: Wide range of service categories
-- **Current Details**: Up-to-date contact information and requirements
 
 [↑ Jump to top](#table-of-contents)
 
@@ -245,7 +177,6 @@ Each resource entry includes:
 3. **Information Updates**: Edit resource details when changes are discovered
 4. **Documentation**: Upload relevant PDFs for comprehensive resource information
 
-[↑ Jump to top](#table-of-contents)
 
 ### For System Maintenance
 1. **Data Quality**: Encourage staff to verify resources during regular use
