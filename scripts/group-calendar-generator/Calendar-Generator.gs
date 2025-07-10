@@ -410,23 +410,14 @@ function formatDayCell(range, hasClasses, dayClasses) {
 
 // === COLOR ASSIGNMENT FOR CLASSES ===
 function getClassColor(groupName) {
-  // Define a color palette for different class types
+  // Shorter dummy color map with adjacent-sounding group names
   var colorMap = {
-    'NYPL': '#1f77b4',                    // Professional blue
-    'Universal DAP': '#ff7f0e',           // Orange
-    'Spanish DAP': '#2ca02c',             // Green  
-    'Community Building Circle': '#d62728', // Red
-    'Spanish CBC': '#9467bd',             // Purple
-    'Harm Reduction': '#8c564b',          // Brown
-    'Financial Management': '#e377c2',     // Pink
-    'Healthy Relationships': '#7f7f7f',   // Gray
-    'Community Leaders': '#828319',       // Olive
-    'Tools for New Thinking': '#17becf',  // Cyan
-    'Spanish TNT': '#ff9896',             // Light red
-    'Five Senses': '#98df8a',             // Light green
-    'Healthy Living': '#c5b0d5'           // Light purple
+    'Justice Circle': '#1f77b4',
+    'Fresh Start': '#ff7f0e',
+    'Wellness Check-In': '#2ca02c',
+    'Resilience Builders': '#d62728',
+    'Pathways Group': '#9467bd'
   };
-  
   // Return the color for this group, or default black if not found
   return colorMap[groupName] || '#000000';
 }
