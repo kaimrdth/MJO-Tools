@@ -1,6 +1,6 @@
 # Supplies - MJO Dashboard
 
-[Jump to AppSheet Configuration](##appsheet-configuration)
+[Jump to AppSheet Configuration](#appsheet-configuration)
 
 ## Overview
 
