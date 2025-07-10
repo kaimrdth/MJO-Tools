@@ -7,55 +7,12 @@ This is a curated archive of internal tools developed for Manhattan Justice Oppo
 ### [`dashboard/`](./dashboard/)
 The MJO Dashboard: a centralized AppSheet web app used by 35+ staff members to coordinate daily operations and client care. Contains visual assets and configuration files for the main operational interface.
 
-- **[`home/`](./dashboard/home/)** - Main dashboard home interface components
-- **[`waiting-area/`](./dashboard/waiting-area/)** - Interface components for participant waiting area management
-- **[`participants/`](./dashboard/participants/)** - Participant data management and case tracking
-- **[`supplies/`](./dashboard/supplies/)** - Inventory management and supply tracking
-- **[`phones/`](./dashboard/phones/)** - Phone system integration and communication tools
-- **[`resource-portal/`](./dashboard/resource-portal/)** - Centralized access to participant resources and referral information
-- **[`special-instructions/`](./dashboard/special-instructions/)** - Custom instructions for special care and attention
-- **[`attorney-rolodex/`](./dashboard/attorney-rolodex/)** - List of defense attorneys and contact information
-- **[`mjo-staff/`](./dashboard/mjo-staff/)** - Staff rolodex
-- **[`donations/`](./dashboard/donations/)** - Donation tracking and management system
-- **[`images/`](./dashboard/images/)** - Visual assets, icons, and media files for the dashboard interface
-
 ### [`scripts/`](./scripts/)
 A comprehensive collection of Google Apps Script automations organized by function:
-
-#### [`compliance-reports/`](./scripts/compliance-reports/)
-- **[`sheets-menu/`](./scripts/compliance-reports/sheets-menu/)** - Custom menu system for Google Sheets
-  - [`ToolGuide.gs`](./scripts/compliance-reports/sheets-menu/ToolGuide.gs) - User guidance and documentation
-  - [`ComplianceCustomMenu.gs`](./scripts/compliance-reports/sheets-menu/ComplianceCustomMenu.gs) - Custom menu interface for compliance workflows
-- **[`drafting-emails/`](./scripts/compliance-reports/drafting-emails/)** - Email automation tools
-  - [`SendEmailDrafts.gs`](./scripts/compliance-reports/drafting-emails/SendEmailDrafts.gs) - Automated email draft generation and sending
-- **[`tracking-dates/`](./scripts/compliance-reports/tracking-dates/)** - Date management and tracking systems
-  - [`PullUpcomingDates.gs`](./scripts/compliance-reports/tracking-dates/PullUpcomingDates.gs) - Retrieves upcoming compliance dates
-  - [`PushUpdatedDates.gs`](./scripts/compliance-reports/tracking-dates/PushUpdatedDates.gs) - Updates date tracking across systems
-- **[`report-generation/`](./scripts/compliance-reports/report-generation/)** - Automated report creation
-  - [`GenerateComplianceDrafts.gs`](./scripts/compliance-reports/report-generation/GenerateComplianceDrafts.gs) - Generates compliance report drafts
-  - [`README.md`](./scripts/compliance-reports/report-generation/README.md) - Documentation for report generation processes
-
-#### [`mcjc-ifier/`](./scripts/mcjc-ifier/)
-Midtown Community Justice Center integration tools
-- [`MCJC-ifier.gs`](./scripts/mcjc-ifier/MCJC-ifier.gs) - Data transformation and formatting for criteria-based forwarding to MCJC 
-- [`MainSheetChecker.gs`](./scripts/mcjc-ifier/MainSheetChecker.gs) - Validation and quality control for main data sheets
-
-#### [`group-calendar-generator/`](./scripts/group-calendar-generator/)
-- [`Calendar-Generator.gs`](./scripts/group-calendar-generator/Calendar-Generator.gs) - Automated calendar creation for group programming and court dates
 
 ### [`media/`](./media/)
 Demo videos, diagrams, and visual aids for understanding how the systems work.
 
-## Key Features
-
-- **Compliance Tracking**: Automated monitoring of participant compliance requirements with date tracking and notification systems
-- **Report Generation**: Streamlined creation of compliance reports and court documentation
-- **Email Automation**: Bulk email drafting and sending capabilities for case management
-- **Calendar Management**: Automated generation of group programming and court calendars
-- **Data Integration**: Tools for formatting and transferring data between MJO systems and external partners like MCJC
-- **Quality Control**: Validation systems to ensure data accuracy across all platforms
-- **Resource Management**: Centralized portal for participant resources, staff tools, and organizational assets
-- **Inventory Tracking**: Supply and donation management systems
 
 ## Technical Stack
 
