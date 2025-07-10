@@ -1,6 +1,6 @@
 # MJO-Tools
 
-This is a curated archive of internal tools developed for Manhattan Justice Opportunities (MJO), a court-based alternative-to-incarceration program in New York City. The tools were built to reduce manual overhead, streamline daily office operations, and improve service delivery to justice-involved participants. This repo is structured to support both internal handoff and as a public-facing portfolio of low-code systems work.
+This is a curated archive of internal tools developed for Manhattan Justice Opportunities (MJO), a court-based alternative-to-incarceration program in New York City. The tools were built to reduce manual overhead, streamline daily office operations, and improve service delivery to justice-involved participants. I tried to write and structure this repo to support both internal handoff and live as a public-facing portfolio of low-code systems work.
 
 ## Structure
 
@@ -9,9 +9,6 @@ The MJO Dashboard: a centralized AppSheet web app used by 35+ staff members to c
 
 ### [`scripts/`](./scripts/)
 A comprehensive collection of Google Apps Script automations organized by function:
-
-### [`media/`](./media/)
-Demo videos, diagrams, and visual aids for understanding how the systems work.
 
 
 ## Technical Stack
