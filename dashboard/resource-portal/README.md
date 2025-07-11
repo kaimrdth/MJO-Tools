@@ -53,6 +53,7 @@ The Resource Portal functions as a centralized repository where staff can quickl
 - Ensures data freshness and accuracy
 - Tracks verification history for quality control
 - Promotes regular data maintenance by staff
+- Signals reliability of service provider to other staff
 
 [↑ Jump to top](#table-of-contents)
 
