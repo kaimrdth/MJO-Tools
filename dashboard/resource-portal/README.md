@@ -6,7 +6,7 @@ The Resource Portal is an internal database of NYC area service providers design
 
 ## Purpose and Functionality
 
-The Resource Portal functions as a centralized repository where staff can quickly access and manage referral information for participants. It eliminates the need to search through scattered documents, bookmarks, or personal notes by providing a unified platform with up-to-date service provider information.
+The Resource Portal functions as a centralized repository where staff can quickly access and manage referral information for participants. It supports bookmarking go-to resources, Google Maps integration, and a <i>Verify</i> button that timestamps a provider when a case manager confirms the information is accurate following a successful referral.
 
 ## Screenshots
 
