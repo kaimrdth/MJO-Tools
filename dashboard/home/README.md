@@ -12,10 +12,8 @@ The Home view functions as the primary landing screen for staff, designed to str
 
 Key capabilities include:
 - **Real-time appointment calendar** with integrated check-in functionality
-- **Quick action buttons** for common front desk operations
-- **Dynamic date display** that updates automatically throughout the day
-- **Seamless workflow integration** connecting appointments to participant tracking
 - **Automated notifications** via Slack webhooks for team coordination
+- **Walk-in rotation assignment** built into the Sign in form, making it easy for reception to assign clients to the right practitioners 
 
 ## Sign In & Check In Workflows
 
