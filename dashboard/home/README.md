@@ -31,12 +31,12 @@ For participants arriving without scheduled appointments, the **Sign In** naviga
 
 ## Slack Integration
 
-Both check-in methods trigger automated Slack notifications to keep the team informed of participant arrivals:
+Both check-in methods trigger automated Slack notifications in the in-office channel:
 
-- **Scheduled appointments** (Quick Check In): Notifications are sent to the office channel when participants check in for their appointments
-- **Walk-in participants** (Sign In form): When a case manager is assigned during sign-in, the system sends a notification to the in-office channel and tags the specific case manager in a thread
+- The **Quick Check In** button sends a notification using the appointment’s details with one click.
+- The **Sign In** form collects manual input by the receptionist, then sends a similar notification upon submission.
 
-This integration ensures that case managers are immediately aware when their participants arrive, whether for scheduled appointments or unexpected visits.
+In both cases, if a case manager is assigned, the system tags them in a thread under the original Slack message. This ensures the team is immediately aware of participant arrivals and who’s responsible for follow-up.
 
 ![Slack Notification Screenshot](../images/slack-walkin-cm.png)
 
