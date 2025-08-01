@@ -8,7 +8,7 @@ This is a curated archive of internal tools developed for Manhattan Justice Oppo
 The MJO Dashboard: a centralized AppSheet web app used by 35+ staff members to coordinate daily operations and client care. Contains visual assets and configuration files for the main operational interface.
 
 ### [`scripts/`](./scripts/)
-A comprehensive collection of Google Apps Script automations organized by function:
+A comprehensive collection of Google Apps Script automations organized by function
 
 
 ## Technical Stack
