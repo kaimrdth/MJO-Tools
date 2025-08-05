@@ -6,7 +6,7 @@ The dashboard serves as a centralized platform for staff to manage client appoin
 
 ![Dashboard Screenshot](./images/dashboard.png)
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 ```mermaid
 graph TB
@@ -65,14 +65,14 @@ graph TB
     style P fill:#fff3e0
 ```
 
-## ⚙️ Technology Stack
+## Technology Stack
 
 - **Frontend**: AppSheet views and behavior logic
 - **Backend**: Google Sheets (data tables and schemas)
 - **Automation Layer**: AppSheet bots and custom Apps Script functions
 - **Integrations**: Slack API, AcuityScheduling API
 
-## 📖 Documentation Structure
+## Documentation Structure
 
 The documentation below is organized by feature. Each folder contains:
 - View definitions and UX logic
@@ -82,7 +82,7 @@ The documentation below is organized by feature. Each folder contains:
 
 ---
 
-## 📂 Feature Modules
+## Feature Modules
 
 | Module | Description | Key Functionality |
 |--------|-------------|------------------|
@@ -94,7 +94,7 @@ The documentation below is organized by feature. Each folder contains:
 | [**MJO Staff**](./mjo-staff/) | Staff administration | User permissions, staff directory, role management |
 | [**Special Instructions**](./special-instructions/) | Participant notes system | Critical participant-specific precautions and notes |
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Access to the MJO AppSheet application
@@ -107,19 +107,19 @@ The dashboard is accessible through:
 - **Web Interface**: Browser-based AppSheet portal
 - **Integration Points**: Slack workspace, AcuityScheduling system
 
-## 📊 Impact & Usage
+## Impact & Usage
 
 - **Active Users**: 35+ staff members
 - **Annual Reach**: Supports services for over 3,000 participants
 - **Operational Coverage**: Daily office operations and client coordination
 
-## 🔧 Maintenance & Support
+## Maintenance & Support
 
 - **Documentation Updates**: Feature documentation evolves with system changes
 - **Data Backup**: Automated through Google Sheets integration
 - **System Monitoring**: Real-time status through AppSheet platform
 
-## 📋 Contributing
+## Contributing
 
 When updating documentation:
 1. Follow the established folder structure for each feature module
