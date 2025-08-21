@@ -1,5 +1,11 @@
 # MJO-Tools
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub Stars](https://img.shields.io/github/stars/kaitagamimeredith/MJO-Tools?style=social)](https://github.com/kaitagamimeredith/MJO-Tools/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/kaitagamimeredith/MJO-Tools?style=social)](https://github.com/kaitagamimeredith/MJO-Tools/network/members)
+[![GitHub Issues](https://img.shields.io/github/issues/kaitagamimeredith/MJO-Tools)](https://github.com/kaitagamimeredith/MJO-Tools/issues)
+[![Last Commit](https://img.shields.io/github/last-commit/kaitagamimeredith/MJO-Tools)](https://github.com/kaitagamimeredith/MJO-Tools/commits/main)
+
 This is a curated archive of internal tools developed for Manhattan Justice Opportunities (MJO), a court-based alternative-to-incarceration program in New York City. The tools were built to reduce manual overhead, streamline daily office operations, and improve service delivery to justice-involved participants. I tried to write and structure this repo to support both internal handoff and live as a public-facing portfolio of low-code systems work.
 
 ## Structure
