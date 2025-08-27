@@ -18,6 +18,40 @@ The Supplies system functions as a centralized inventory management tool where s
 
 [↑ Jump to top](#supplies---mjo-dashboard)
 
+## Workflow Diagram
+
+```mermaid
+flowchart TD
+    A[Staff Access Supplies Interface] --> B[Search/Browse Items]
+    B --> C{Item Available?}
+    C -->|Yes| D[Add to Cart]
+    C -->|No| E[Item Unavailable]
+    
+    D --> F[Review Cart]
+    F --> G[Adjust Quantities]
+    G --> H[Confirm Checkout]
+    
+    H --> I[Update Inventory]
+    I --> J[Record Transaction]
+    J --> K{Quantity = 3?}
+    
+    K -->|Yes| L[🔔 Slack Trigger:<br/>Webhook to Office Manager]
+    K -->|No| M[Process Complete]
+    
+    L --> N[Office Manager Notified:<br/>'There are 3 left of Item']
+    N --> M
+    
+    E --> O[Staff Searches Alternative]
+    O --> B
+    
+    style L fill:#ff9999,stroke:#cc0000
+    style N fill:#ffcccc,stroke:#cc0000
+```
+
+*Workflow showing the complete supplies management process with Slack notification trigger when inventory reaches critical level (quantity = 3)*
+
+[↑ Jump to top](#supplies---mjo-dashboard)
+
 ## Key Features
 
 ### 1. **Real-Time Inventory Tracking**
