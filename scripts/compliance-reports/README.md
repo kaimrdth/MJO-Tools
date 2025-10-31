@@ -1,10 +1,10 @@
 # Compliance Reports Suite
 
-A comprehensive Google Apps Script automation suite for managing court compliance reporting workflows. This system streamlines the process of tracking court dates, generating compliance reports, and coordinating communications between Innovating Justice staff and court personnel.
+A Google Apps Script automation suite for managing court compliance reporting workflows. This system streamlines the process of tracking court dates, generating compliance reports, and coordinating communications for MJO staff.
 
 ## Overview
 
-The Compliance Reports Suite automates the end-to-end workflow for managing court compliance requirements:
+The Compliance Reports Suite automates the workflow for managing court compliance requirements:
 
 - **Data Synchronization**: Automatically pulls and updates court dates across multiple spreadsheets
 - **Report Generation**: Creates formatted compliance reports in Google Docs with proper filing structure
@@ -47,10 +47,9 @@ All functions are accessible through the **Compliance Tools** menu (`sheets-menu
 
 ✅ **Automated Workflow** - Reduces manual data entry and processing time  
 ✅ **Batch Processing** - Handles large datasets efficiently with progress tracking  
-✅ **Smart Organization** - Maintains clean folder structures and prevents duplicates  
+✅ **Organization** - Maintains clean folder structures and prevents duplicates  
 ✅ **Multi-User Support** - Configurable for different staff members and roles  
 ✅ **Error Handling** - Robust logging and error recovery mechanisms  
-✅ **Extensible Design** - Easy to modify for changing requirements  
 
 ## Quick Start
 
