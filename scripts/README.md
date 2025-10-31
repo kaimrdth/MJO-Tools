@@ -11,25 +11,6 @@ This folder contains Google Apps Script automation tools for managing court comp
 - Progress tracking and batch processing for large datasets
 - Handles date validation, duplicate checking, and data organization
 
-### [sheets-menu/](./sheets-menu/)
-**Custom Google Sheets Interface**
-- Custom menu system for easy access to compliance tools
-- Tool guide and help documentation
-- User-friendly interface for running automated functions
-
-### [drafting-emails/](./drafting-emails/)
-**Email Automation & Communication**
-- Automated generation of compliance report emails grouped by court part
-- Draft email creation with case details and attachments
-- User mapping and email routing based on active user
-
-### [report-generation/](./report-generation/)
-**Document Creation & File Management**
-- Batch generation of compliance reports from Google Doc templates
-- Automated folder organization by date hierarchy (Year/Month/Week/Day/Part)
-- Template processing with dynamic data replacement
-- File naming conventions and duplicate handling
-
 ### [mcjc-ifier/](./mcjc-ifier/)
 **Case Processing & Referral Management**
 - Automated case categorization based on precinct, charges, and eligibility criteria
