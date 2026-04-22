@@ -93,6 +93,7 @@ The documentation below is organized by feature. Each folder contains:
 | [**Phones**](./phones/) | Communication workflow | Phone request handling with Slack integration |
 | [**Monitor**](./monitor/) | Appointment backlog and capacity management | Charts showing incoming work, intakes completed, and appointment backlogs over time|
 | [**Donations**](./donations/) | Donation tracking system | Incoming donations and inventory flow management |
+| [**Attorney Rolodex**](./attorney-rolodex/) | Directory of attorneys | Crowd-sourced by staff to ensure updated contact information |
 | [**MJO Staff**](./mjo-staff/) | Staff administration | User permissions, staff directory, role management |
 | [**Special Instructions**](./special-instructions/) | Participant notes system | Critical participant-specific precautions and notes |
 
