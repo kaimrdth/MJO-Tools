@@ -1,14 +1,12 @@
 # 📊 Monitor
 
-The **Monitor** view is an operational health dashboard that tracks appointment availability and intake throughput in real time. It gives leadership a clear picture of how quickly participants are being seen, how many referrals and intakes are being completed, and whether current staff capacity is keeping pace with demand — from both participants and the courts.
+The **Monitor** view is an operational health dashboard that tracks appointment availability and intake volume over time. It gives leadership the context needed to make informed resourcing decisions, drawing on demand patterns, participant wait times, and referral throughput to ensure the office has what it needs to serve participants well.
 
 ![Monitor View Screenshot](../images/monitor.png)
 
 ## Purpose & Overview
 
-The Monitor view exists to answer one core operational question: are we keeping up? Appointment wait times, intake volume, and referral completions all intersect here to surface whether the office is striking the right balance between staff capacity, participant experience, and court expectations.
-
-Courts refer cases to MJO with the expectation that participants are seen in a timely manner. If wait times grow too long, participant experience degrades and the office risks falling short of those obligations. Monitor makes that risk visible before it becomes a problem.
+The Monitor view brings together appointment availability and intake data to support leadership in understanding demand trends and planning accordingly. Rather than a reactive tool, it's designed for proactive decision-making, giving the office visibility into where resources are most needed so that participants get timely access to services and court partners stay appropriately informed.
 
 ---
 
@@ -22,16 +20,16 @@ The same wait time data aggregated by month, providing a longer-range trend line
 
 ### Referrals & Intakes Completed
 A monthly chart showing:
-- **Referrals received** — cases referred to MJO by courts and other partners
-- **Intakes completed** — participants who have completed the intake process
-- **Delta** — the gap between the two, surfacing whether intake throughput is keeping pace with incoming referrals
+- **Referrals received:** cases referred to MJO by courts and other partners
+- **Intakes completed:** participants who have completed the intake process
+- **Delta:** the gap between the two, surfacing whether intake throughput is keeping pace with incoming referrals
 
-A growing delta signals a backlog forming; a shrinking delta indicates the team is working through demand.
+Tracking the delta over time helps leadership understand whether current capacity aligns with referral volume and whether additional resources or scheduling adjustments may be warranted.
 
 ### Next Available Appointments Table
 A table listing the next 10 available appointments by type (intakes and assessments), including:
 - **Average wait time** (in days) across available slots
-- **Maximum wait time** — the longest a participant would wait for the next opening
+- **Maximum wait time:** the longest a participant would wait for the next opening
 
 This table gives staff and leadership an immediate answer to "how long is someone going to wait if they call today?"
 
@@ -51,13 +49,9 @@ The Apps Script iterates through AcuityScheduling appointment types (intakes and
 
 ## Why This Matters
 
-Three competing pressures shape how MJO schedules appointments:
+Scheduling decisions at MJO sit at the intersection of several real-world factors: practitioner availability, participant access, and the expectations of referring court partners. Getting that balance right requires visibility into demand rather than relying on a general sense of how busy things feel day-to-day.
 
-1. **Staff capacity** — practitioners have finite availability
-2. **Participant experience** — long wait times erode trust and can cause people to disengage
-3. **Court expectations** — referring courts expect cases to be seen promptly; delays reflect on the office's reliability as a partner
-
-Monitor brings all three into a single view. If wait times spike, leadership can see it here and respond — whether that means adjusting practitioner schedules, adding intake capacity, or communicating proactively with referring courts.
+Monitor provides the data infrastructure to make those conversations concrete. When leadership can point to trends in wait times or referral volume, resourcing discussions are grounded in evidence rather than intuition, making it easier to advocate for what the team actually needs.
 
 ---
 
@@ -65,8 +59,8 @@ Monitor brings all three into a single view. If wait times spike, leadership can
 
 - Wait time data is pulled from AcuityScheduling via an Apps Script that crawls appointment availability by type; the script is scheduled to run on a regular cadence to keep the data current
 - Intake and referral data is sourced from Salesforce and aggregated at the monthly level
-- The next available appointments table is designed for quick operational reference — staff can check it at any time to give accurate wait time estimates to callers or walk-ins
-- The delta in the referrals/intakes chart is the key metric to watch: it indicates whether the office is absorbing its caseload or falling behind
+- The next available appointments table is designed for quick operational reference; staff can check it at any time to give accurate wait time estimates to callers or walk-ins
+- The referrals/intakes delta is useful for understanding how demand is trending relative to current capacity and for building the case for resourcing changes when needed
 
 ---
 
