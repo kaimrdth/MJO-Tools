@@ -1,6 +1,6 @@
 # 👥 Participants
 
-The **Participants** view is a dual-purpose module that handles both real-time walk-in tracking and historical data visualization. It gives staff an at-a-glance view of who's in the office today while maintaining a full log of every participant who has ever walked in — and surfaces that data as charts to inform staffing decisions.
+The **Participants** view is a dual-purpose module that handles both real-time walk-in tracking and historical data visualization. It gives staff an at-a-glance view of who's in the office today while maintaining a full log of every participant who has ever walked in, and surfaces that data as charts to inform staffing decisions.
 
 ![Participants View Screenshot](../images/participants1.png)
 
@@ -47,7 +47,7 @@ Clicking the **Data** button within Participants opens a chart dashboard built f
 
 ### Why This Matters
 
-Walk-in traffic is not evenly distributed — and staffing should reflect that. If participants consistently arrive on Tuesday mornings but rarely on Friday afternoons, the office can staff walk-in shifts accordingly. The Data view makes those patterns visible so scheduling decisions are driven by actual usage rather than assumption.
+Walk-in traffic is not evenly distributed and staffing should reflect that. If participants consistently arrive on Tuesday mornings but rarely on Friday afternoons, the office can staff walk-in shifts accordingly. The Data view makes those patterns visible so scheduling decisions are driven by actual usage rather than assumption.
 
 ---
 
@@ -79,11 +79,8 @@ Each chart in the Data view references the `Participant Log` table and aggregate
 
 ## 📎 Implementation Notes
 
-- The walk-in log updates in real time as new Sign In forms are submitted from the Home view
-- The split-panel layout is intentional — staff need both "right now" and "full history" views simultaneously
-- The Data view is designed for periodic review by leadership or whoever manages staffing schedules, not necessarily daily use
+- The walk-in log updates in real time as new Sign In forms are submitted from the Home view, which also triggers the Slack notification in the in-office channel
 - Walk-in patterns revealed by the charts directly inform how walk-in shifts are assigned throughout the week
 
 ---
 
-*This documentation reflects the current state of the Participants view as of the latest AppSheet configuration.*
