@@ -1,4 +1,4 @@
-# 📊 Monitor
+# Monitor
 
 The **Monitor** view is an operational health dashboard that tracks appointment availability and intake volume over time. It gives the team the context needed to make informed resourcing decisions, drawing on demand patterns, participant wait times, and referrals to ensure the office has what it needs to serve participants well.
 
@@ -49,7 +49,7 @@ Scheduling decisions at MJO sit at the intersection of several real-world factor
 
 ---
 
-## 📎 Implementation Notes
+## Implementation Notes
 
 - Wait time data is pulled from AcuityScheduling via an Apps Script that crawls appointment availability by type; the script is scheduled to run on a regular cadence to keep the data current
 - Intake and referral data is sourced from Salesforce and aggregated at the monthly level

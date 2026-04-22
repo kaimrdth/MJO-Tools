@@ -1,6 +1,6 @@
-# 🏠 Home View
+# Home View
 
-The **Home** view serves as the central operational dashboard for daily office operations, providing staff with a real-time overview of appointments, participant check-ins, and front desk workflows. This dashboard dynamically displays the current date and consolidates multiple data streams to create a comprehensive view of daily activities.
+The **Home** view is the central dashboard for daily office operations, giving staff a real-time view of appointments, participant check-ins, and front desk workflows. It displays the current date and consolidates appointments and check-ins for the day.
 
 ![Home View Screenshot](../images/dashboard.png)
 
@@ -8,7 +8,7 @@ The **Home** view serves as the central operational dashboard for daily office o
 
 ## Purpose & Overview
 
-The Home view functions as the primary landing screen for staff, designed to streamline daily client interactions and provide immediate visibility into scheduled appointments and walk-ins. It integrates with AcuityScheduling API to pull real-time appointment data and features automated workflows that connect appointment management to participant logging systems.
+The Home view is the first screen staff see each day. It pulls live appointment data from AcuityScheduling and connects check-in actions directly to the participant log.
 
 Key capabilities include:
 - **Real-time appointment calendar** with integrated check-in functionality
@@ -20,12 +20,12 @@ Key capabilities include:
 The Home view supports two primary methods for managing participant arrivals, each designed for different scenarios:
 
 ### Quick Check In Action
-The **Quick Check In** button appears directly within the appointment calendar for scheduled visits. When staff click this action, it automatically creates a new entry in the Participant Log table with pre-populated information from the appointment (participant name, appointment type, case manager, and notes). This streamlined process reduces friction during busy periods by eliminating manual data entry and immediately routing participants to the "Waiting Area" status.
+The **Quick Check In** button appears directly within the appointment calendar for scheduled visits. When staff click this action, it automatically creates a new entry in the Participant Log table with pre-populated information from the appointment (participant name, appointment type, case manager, and notes). This eliminates manual data entry during busy periods and immediately routes participants to the "Waiting Area" status.
 
 ![quick check in](../images/quick-checkin.png)
 
 ### Sign In Form (Walk-ins)
-For participants arriving without scheduled appointments, the **Sign In** navigation action routes staff to a dedicated form at the front desk. This comprehensive workflow captures detailed participant information and visit reasons, making it ideal for walk-in scenarios that require more context.
+For participants arriving without scheduled appointments, the **Sign In** navigation action routes staff to a dedicated form at the front desk. This form captures participant information and visit context for walk-ins.
 
 ![Sign In Form Screenshot](../images/sign-in.png)
 
@@ -44,7 +44,7 @@ In both cases, if a case manager is assigned, the system tags them in a thread u
 
 ## AppSheet Setup
 
-### 🧱 View Configuration
+### View Configuration
 - **Type**: Dashboard
 - **Display Name Formula**:  
   ```appsheetscript
@@ -56,7 +56,7 @@ In both cases, if a case manager is assigned, the system tags them in a thread u
   ```
   *This hides the Home view on the iPad used for inventory.*
 
-### 🧩 Subview: Appointments
+### Subview: Appointments
 **View Type**: Calendar  
 **Table**: `Appointments`
 
@@ -71,7 +71,7 @@ In both cases, if a case manager is assigned, the system tags them in a thread u
 | Category       | `Case Manager`      |
 | Default View   | `Day`               |
 
-### ⚡ Action: Check In
+### Action: Check In
 This **Quick Action** appears prominently in the Appointments calendar and creates a new row in the `Participant Log` table when staff mark someone as checked in.
 
 | Attribute         | Value |
@@ -97,9 +97,9 @@ Status       = "Waiting Area"
 
 ---
 
-## 📎 Implementation Notes
+## Implementation Notes
 - This dashboard is used live in office every day
-- The Quick Check In action reduces friction by automatically logging arrivals with a timestamp and routing them to the "Waiting Area" flow
+- The Quick Check In action automatically logs arrivals with a timestamp and routes them to the "Waiting Area" flow
 - The confirmation prompt helps prevent mis-clicks during rapid client check-ins
 - The view dynamically updates throughout the day as new appointments are added or modified
 - Slack integration ensures seamless team communication for both scheduled and walk-in participants

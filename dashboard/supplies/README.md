@@ -4,12 +4,11 @@
 
 ## Overview
 
-The Supplies feature is a real-time inventory management system that allows staff to check availability and check out items for clients. This streamlined supply distribution system maintains accurate inventory levels while providing a user-friendly interface for staff to quickly locate and distribute necessary supplies to participants.
-
+The Supplies feature is a real-time inventory system that allows staff to check availability and check out items for participants.
 
 ## Purpose and Functionality
 
-The Supplies system functions as a centralized inventory management tool where staff can view real-time supply availability, search for specific items, and check out supplies for client distribution. It eliminates inventory confusion and ensures accurate tracking of supply distribution across all staff members.
+Staff can browse or search current inventory, add items to a cart, and complete a checkout that deducts quantities from the live count. A Slack notification fires automatically when any item drops to 3 remaining.
 
 ## Screenshots
 

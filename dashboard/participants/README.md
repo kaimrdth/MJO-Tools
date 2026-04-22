@@ -1,4 +1,4 @@
-# 👥 Participants
+# Participants
 
 The **Participants** view is a dual-purpose module that handles both real-time walk-in tracking and historical data visualization. It gives the team an at-a-glance view of who's in the office today while maintaining a full log of every participant who has ever walked in, and surfaces that data as charts to inform staffing decisions.
 
@@ -53,7 +53,7 @@ Walk-in traffic is not evenly distributed and scheduling should reflect that. If
 
 ## AppSheet Setup
 
-### 🧱 View Configuration
+### View Configuration
 
 **Walk-in Log View**
 - **Type**: Dashboard (split panel)
@@ -64,7 +64,7 @@ Walk-in traffic is not evenly distributed and scheduling should reflect that. If
 - **Type**: Dashboard (chart panels)
 - **Trigger**: Accessible via the `Data` navigation action within Participants
 
-### 📊 Chart Configuration
+### Chart Configuration
 
 Each chart in the Data view references the `Participant Log` table and aggregates by different time dimensions:
 
@@ -77,7 +77,7 @@ Each chart in the Data view references the `Participant Log` table and aggregate
 
 ---
 
-## 📎 Implementation Notes
+## Implementation Notes
 
 - The walk-in log updates in real time as new Sign In forms are submitted from the Home view, which also triggers the Slack notification in the in-office channel
 - Walk-in patterns revealed by the charts directly inform how walk-in shifts are assigned throughout the week

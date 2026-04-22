@@ -2,11 +2,11 @@
 
 ## Overview
 
-The Resource Portal is an internal database of NYC area service providers designed to streamline participant referrals and improve service delivery. This comprehensive resource management system serves as a collective knowledge base for staff, containing information about service organizations specializing in housing, healthcare, mental health, and more. 
+The Resource Portal is an internal database of NYC area service providers that staff use to look up and manage referral information for participants. It covers organizations across housing, healthcare, mental health, and more.
 
 ## Purpose and Functionality
 
-The Resource Portal functions as a centralized repository where staff can quickly access and manage referral information for participants. It supports bookmarking go-to resources, Google Maps integration, and a <i>Verify</i> button that timestamps a provider when a case manager confirms the information is accurate following a successful referral.
+Staff can search and browse providers, bookmark favorites, open locations in Google Maps, and use the <i>Verify</i> button to timestamp a provider after confirming the information is current following a successful referral.
 
 ## Screenshots
 

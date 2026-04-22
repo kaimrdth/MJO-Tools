@@ -1,13 +1,13 @@
 
 
 
-# 📱 Phones | MJO Dashboard
+# Phones | MJO Dashboard
 
 ![Phones Screenshot](../images/phones.png)
 
 The **Phones** feature provides a structured, ticket-based system for requesting, tracking, and fulfilling mobile phone distribution requests for participants. It replaces the previous ad hoc method, which was error-prone and inefficient, with a more accountable and transparent workflow.
 
-## 🔄 Workflow Overview
+## Workflow Overview
 
 1. **Case Manager or Social Worker Action**
    - Clicks the "+" button to submit a new phone request.
@@ -60,16 +60,14 @@ The **Phones** feature provides a structured, ticket-based system for requesting
        }
        ```
 
-## ✅ Summary
+## Summary
 
 This feature introduces:
 - A **ticketed request flow** for better tracking
 - **Slack-based real-time notifications** to reduce delays
 - A **single-record update model** to keep all request data in one place
 
-It streamlines phone distribution and improves clarity across roles.
-
-## 🧭 System Diagram
+## System Diagram
 
 ```plaintext
 +-------------------------------+

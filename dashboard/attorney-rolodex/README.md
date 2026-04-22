@@ -1,4 +1,4 @@
-# ⚖️ Attorney Rolodex
+# Attorney Rolodex
 
 The **Attorney Rolodex** is a searchable directory of defense attorneys, grouped by agency. The team can look up attorneys quickly, add new entries, and keep existing records current as contacts change.
 
@@ -18,7 +18,7 @@ MJO works closely with defense agencies whose attorneys refer and represent part
 
 ## AppSheet Setup
 
-### 🧱 View Configuration
+### View Configuration
 - **Type:** Table
 - **Grouping:** Defense Agency
 - **Search:** Enabled
