@@ -87,9 +87,11 @@ The documentation below is organized by feature. Each folder contains:
 | Module | Description | Key Functionality |
 |--------|-------------|------------------|
 | [**Home**](./home/) | Central dashboard and team coordination | Check-in tools, team schedule, key metrics aggregation |
+| [**Participants**](./participants/) | Visitor log and data viz | Observe trends in visitor foot traffic|
 | [**Resource Portal**](./resource-portal/) | NYC service provider database | Curated directory of external resources and services |
 | [**Supplies**](./supplies/) | Inventory management system | Tracks distributed items (clothing, hygiene kits, etc.) |
 | [**Phones**](./phones/) | Communication workflow | Phone request handling with Slack integration |
+| [**Monitor**](./monitor/) | Appointment backlog and capacity management | Charts showing incoming work, intakes completed, and appointment backlogs over time|
 | [**Donations**](./donations/) | Donation tracking system | Incoming donations and inventory flow management |
 | [**MJO Staff**](./mjo-staff/) | Staff administration | User permissions, staff directory, role management |
 | [**Special Instructions**](./special-instructions/) | Participant notes system | Critical participant-specific precautions and notes |
