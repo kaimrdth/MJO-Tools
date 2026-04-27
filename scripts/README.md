@@ -25,6 +25,20 @@ This folder contains Google Apps Script automation tools for managing court comp
 - Monthly calendar layouts with facilitator assignments
 - API credential management and connection testing
 
+### [appointments/](./appointments/)
+**Staff Appointment Fetching**
+- Pulls upcoming appointments from Acuity across all staff calendars
+- Rolling ~6-week date window ending on a Friday, weekdays only
+- Extracts client details, appointment types, and intake form notes
+- Writes results to a structured Appointments sheet
+
+### [wait-times/](./wait-times/)
+**Appointment Wait Time Tracking**
+- Checks Acuity availability across all calendars for each appointment type
+- Batched + per-calendar fallback logic with a 100-day lookahead
+- Writes current wait times to a live sheet and maintains a historical log
+- Runs automatically on an hourly time-based trigger
+
 ## 🔧 Key Features
 
 - **Data Synchronization**: Automated pulling and pushing of court dates between different Google Sheets
