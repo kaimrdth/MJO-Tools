@@ -25,6 +25,14 @@ This folder contains Google Apps Script automation tools for managing court comp
 - Monthly calendar layouts with facilitator assignments
 - API credential management and connection testing
 
+### [community-service-parser/](./community-service-parser/)
+**Community Service Attendance Tracking**
+- Processes iPad check-in/check-out form submissions from community service providers
+- Unifies bilingual (English/Spanish) form columns and fuzzy-matches organization names
+- Pairs sign-in/sign-out records by timestamp and calculates hours completed
+- Writes clean per-organization tabs with real-time incremental trigger support
+- In-sheet participant report dialog with hours summary and monthly breakdown
+
 ### [groups-fetcher/](./groups-fetcher/)
 **Group Class Roster Fetching**
 - Pulls group class schedules and client rosters from Acuity for current and next month
