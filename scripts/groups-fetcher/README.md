@@ -12,7 +12,7 @@ flowchart TD
         DR1[Date range\n1st → last of current month]
         CL1[fetchClassesForRangeMultiCalendar\nall unique calendars]
         AP1[fetchAppointmentsForRangeMultiCalendar\nall unique calendars]
-        MAP1[Build classesMap\ndate|time|name key]
+        MAP1["Build classesMap\ndate|time|name key"]
         ATT1[Attach clients\nto matching class]
         ROWS1[Flatten + sort rows]
     end
@@ -21,7 +21,7 @@ flowchart TD
         DR2[Date range\n1st → last of next month]
         CL2[fetchClassesForRangeMultiCalendar]
         AP2[fetchAppointmentsForRangeMultiCalendar]
-        MAP2[Build classesMap]
+        MAP2["Build classesMap\ndate|time|name key"]
         ATT2[Attach clients]
         ROWS2[Flatten + sort rows]
     end
