@@ -2,6 +2,34 @@
 
 A Google Apps Script tool that automatically pulls upcoming staff appointments from Acuity Scheduling and writes them to a Google Sheet, organized by case manager and filtered to weekday appointments only.
 
+## Architecture
+
+```mermaid
+flowchart TD
+    SP[Script Properties\nACUITY_API_KEY]
+    SL[Staff Lookup Sheet\nCalendarID · Calendar Name]
+
+    subgraph script["fetchAndWriteAppointmentsWithCalendarName()"]
+        DR[getDateRange\ntoday → ~6 weeks out]
+        LOOP[For each CalendarID]
+        API[Acuity API\n/appointments]
+        MERGE[Merge results]
+        SORT[Sort by datetime]
+        FILTER[Filter weekends]
+        FORMAT[Format rows\nextract form field 15710292]
+    end
+
+    OUT[Appointments Sheet\n10 columns]
+
+    SP -->|API key| script
+    SL -->|calendar map| script
+    DR --> LOOP
+    LOOP -->|GET request| API
+    API -->|appointment records| MERGE
+    MERGE --> SORT --> FILTER --> FORMAT
+    FORMAT --> OUT
+```
+
 ## Features
 
 - **Acuity Integration**: Fetches appointments directly from the Acuity Scheduling API across all staff calendars
