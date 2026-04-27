@@ -25,6 +25,13 @@ This folder contains Google Apps Script automation tools for managing court comp
 - Monthly calendar layouts with facilitator assignments
 - API credential management and connection testing
 
+### [groups-fetcher/](./groups-fetcher/)
+**Group Class Roster Fetching**
+- Pulls group class schedules and client rosters from Acuity for current and next month
+- Joins class availability data with individual bookings into a single row-per-client view
+- Multi-calendar support with per-appointment-type calendar overrides
+- Consolidates both months into a unified sorted sheet
+
 ### [appointments/](./appointments/)
 **Staff Appointment Fetching**
 - Pulls upcoming appointments from Acuity across all staff calendars
